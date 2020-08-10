@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
-        <activity android:name=".DashActivity"></activity>
+        <activity android:name=".VerifyActivity"></activity>
+        <activity android:name=".DashActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".FirstActivity" />
         <activity android:name=".SplashActivity">
@@ -19,7 +20,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>
