@@ -12,6 +12,8 @@
         <activity android:name=".VerifyActivity"></activity>
         <activity android:name=".DashActivity" />
         <activity android:name=".LoginActivity" />
+        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat"  android:screenOrientation="portrait"/>
         <activity android:name=".FirstActivity" />
         <activity android:name=".SplashActivity">
             <intent-filter>
