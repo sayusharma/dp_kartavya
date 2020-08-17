@@ -6,12 +6,16 @@ import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
 import androidx.viewpager.widget.ViewPager;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -27,6 +31,8 @@ import android.widget.Toast;
 
 import com.e.dpkartavya.Model.AdditionalDetails;
 import com.e.dpkartavya.Model.BasicDetails;
+import com.e.dpkartavya.Model.Loc;
+import com.e.dpkartavya.Model.MoreDetails;
 import com.e.dpkartavya.Model.OtherServiceProvider;
 import com.e.dpkartavya.Model.PersonalDetails;
 import com.e.dpkartavya.Model.RelativeDetails;
@@ -34,6 +40,8 @@ import com.e.dpkartavya.Model.SecurityChecks;
 import com.e.dpkartavya.Model.ServiceProvider;
 import com.e.dpkartavya.Model.SpouseDetails;
 import com.e.dpkartavya.Model.VerifySnr;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -52,20 +60,26 @@ import com.moengage.core.Properties;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.UUID;
 
 public class VerifyActivity extends AppCompatActivity {
+    private static final int LOCATION_REQ_CODE = 1021;
     Toolbar propertytoolbar;
     Context context;
     private String currentDate;
     private PersonalDetails personalDetails;
     private SpouseDetails spouseDetails;
     private AdditionalDetails additionalDetails;
+    private FusedLocationProviderClient fusedLocationClient;
     private RelativeDetails relativeDetails;
     private BasicDetails basicDetails;
     private ServiceProvider driver,watchman,servant,tenant,sweeper,carCleaner;
     private OtherServiceProvider others;
+    private MoreDetails moreDetails;
     EditText name,dob,addr,mob,email,sname,sdob,wedding,from,year,field,children,residingWith,health,lpVisit,freeTime,rname,relation,rmob,raddr;
     private ServiceProviders serviceProviders;
     private SecurityChecks securityChecks;
@@ -73,13 +87,17 @@ public class VerifyActivity extends AppCompatActivity {
     private String retired = "";
     TabLayout tablayout;
     private Spinner dr,wa,ser,ten,swe,car,oth;
+    private String currentTime;
     ViewPager viewPager;
+    private Loc location;
     private String teVerStatus,drVerStatus,wVerStatus,serVerStatus,swVerStatus,carVerStatus,otVerStatus;
     private EditText drName,drAddr,drVerNo,wName,wAddr,wVerNo,serName,serAddr,serVerNo,teName,teAddr,teVerNo,swName,swAddr,swVerNo,carName,carAddr,carVerNo,otName,otAddr,otVerNo,otSerType;
     private String tenant_current_gender="";
     private String currentPhotoDownloadableUrl="";
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
+    private double latitude;
+    private double longitude;
     private Uri currentPhotoUri;
     private FirebaseStorage storage;
     private StorageReference storageReference;
@@ -93,11 +111,6 @@ public class VerifyActivity extends AppCompatActivity {
         storageReference = storage.getReference();
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("snr_czn");
-        propertytoolbar = findViewById(R.id.propertytoolbar);
-        setSupportActionBar(propertytoolbar);
-        //initialiseSwitchCompats();
-        //initialiseEditTexts();
-       // initialiseSpinners();
         tablayout = findViewById(R.id.tabLayout);
         viewPager = findViewById(R.id.viewPager);
         tablayout.addTab(tablayout.newTab().setText("Basic Details"));
@@ -122,13 +135,23 @@ public class VerifyActivity extends AppCompatActivity {
             public void onTabReselected(TabLayout.Tab tab) {
             }
         });
-        getSupportActionBar().setTitle("Senior Citizen Verification");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+            }, LOCATION_REQ_CODE);
+        } else {
+            getCurrentLocation();
+            //getLocation();
+        }
         Calendar cldr = Calendar.getInstance();
         int day = cldr.get(Calendar.DAY_OF_MONTH);
         int month = cldr.get(Calendar.MONTH);
         int year = cldr.get(Calendar.YEAR);
         currentDate = day + "/" + (month+1) + "/" + year;
+
 
     }
 
@@ -169,10 +192,47 @@ public class VerifyActivity extends AppCompatActivity {
         otSerType = findViewById(R.id.OthersSerType);
         otVerNo = findViewById(R.id.OthersVerNo);
 
-
-
     }
-
+    public void onClickBackVerify(View view){
+        Intent intent = new Intent(VerifyActivity.this,DashActivity.class);
+        startActivity(intent);
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode){
+            case LOCATION_REQ_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    //getLocation();
+                    getCurrentLocation();
+                }
+                break;
+        }
+    }
+    private void getCurrentLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            latitude = location.getLatitude();
+                            longitude = location.getLongitude();
+                            // Logic to handle location object
+                        }
+                    }
+                });
+    }
     private void initialiseSwitchCompats() {
         Aaa = findViewById(R.id.Aaa);
         Aab = findViewById(R.id.Aab);
@@ -365,7 +425,10 @@ public class VerifyActivity extends AppCompatActivity {
             securityChecks = new SecurityChecks(getChecked(Aaa),getChecked(Aab),getChecked(Aac),getChecked(Aad),getChecked(Aae),getChecked(Aaf)
                     ,getChecked(Aag),getChecked(Aba),getChecked(Abb),getChecked(Abc),getChecked(Abd),getChecked(Abe),getChecked(Abf),getChecked(Abg)
                     ,getChecked(Ba),getChecked(Bb),getChecked(Bc),getChecked(Bd),getChecked(Be),getChecked(Bf));
-            VerifySnr verifySnr = new VerifySnr(basicDetails,serviceProviders,securityChecks);
+            currentTime = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
+            location = new Loc(String.valueOf(latitude),String.valueOf(longitude));
+            moreDetails = new MoreDetails(location,"ayush",currentDate,currentTime);
+            VerifySnr verifySnr = new VerifySnr(basicDetails,serviceProviders,securityChecks,moreDetails);
             String id = basicDetails.getPersonalDetails().getMob();
             databaseReference.child(id).setValue(verifySnr).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override

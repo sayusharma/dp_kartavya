@@ -29,6 +29,15 @@ public class DashActivity extends AppCompatActivity implements AdapterView.OnIte
         Intent intent = new Intent(DashActivity.this,VerifyActivity.class);
         startActivity(intent);
     }
+    public void onClickMarkAVisit(View view)
+    {
+        Intent intent = new Intent(DashActivity.this,MarkVisitActivity.class);
+        startActivity(intent);
+    }
+    public void onClickUpdateSenior(View view){
+        Intent intent = new Intent(DashActivity.this,UpdateSeniorActivity.class);
+        startActivity(intent);
+    }
     private ArrayList<CustomItem> getCustomList() {
         customList = new ArrayList<>();
         customList.add(new CustomItem("Select  Police Station"));

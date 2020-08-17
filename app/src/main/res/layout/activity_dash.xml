@@ -119,6 +119,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds = "true"
+                android:onClick="onClickMarkAVisit"
                 android:layout_marginTop="24dp"
                 app:cardCornerRadius="10dp"
                 android:layout_marginStart="20dp"
@@ -132,6 +133,7 @@
                     android:adjustViewBounds = "true"
                     android:src="@drawable/visit" />
                 <ImageView
+                    android:onClick="onClickMarkAVisit"
                     android:id="@+id/criminal_data_add"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -146,6 +148,7 @@
                 android:layout_height="wrap_content"
                 android:adjustViewBounds = "true"
                 android:layout_marginTop="24dp"
+                android:onClick="onClickUpdateSenior"
                 app:cardCornerRadius="10dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"

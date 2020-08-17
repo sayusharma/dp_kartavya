@@ -2,16 +2,8 @@
     <string name="app_name">DP Kartavya</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string-array name="verification">
-        <item>Select Verification Status</item>
-        <item>Verified</item>
-        <item>Not verified</item>
-        <item>Part-Time</item>
-        <item>Verification Pending</item>
-        <item>NONE</item>
-    </string-array>
-
     <string name="A">SECURITY CHECKS FOR HOUSE SAFETY</string>
+
     <string name="Aa">1. ACCESS CONTROL SECURITY</string>
     <string name="Aaa">A. Door Chain\t\t</string>
     <string name="Aab">B. Magic Eye/Door Viewer\t\t</string>
@@ -35,5 +27,13 @@
     <string name="Bd">D. Whether neighbours/RWA are in regular touch\t\t</string>
     <string name="Be">E. Whether BEAT police officer is regularly visiting the house\t\t</string>
     <string name="Bf">F. Lighting in surrounding Area/Street Lighting\t\t</string>
+    <string-array name="verification">
+        <item>Select Verification Status</item>
+        <item>Verified</item>
+        <item>Not verified</item>
+        <item>Part-Time</item>
+        <item>Verification Pending</item>
+        <item>NONE</item>
+    </string-array>
 
 </resources>
