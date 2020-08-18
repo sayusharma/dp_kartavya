@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -26,17 +28,36 @@ public class DashActivity extends AppCompatActivity implements AdapterView.OnIte
     }
     public void onClickVerify(View view)
     {
-        Intent intent = new Intent(DashActivity.this,VerifyActivity.class);
-        startActivity(intent);
+        if (!getLocation().equals("Select  Police Station")){
+            Intent intent = new Intent(DashActivity.this, VerifyActivity.class);
+            startActivity(intent);
+        }
+        else {
+            Toast.makeText(getApplicationContext(),"SELECT POLICE STATION",Toast.LENGTH_LONG).show();
+        }
+    }
+    public String getLocation(){
+        TextView textView = findViewById(R.id.tvsniperlayout);
+        return textView.getText().toString();
     }
     public void onClickMarkAVisit(View view)
     {
-        Intent intent = new Intent(DashActivity.this,MarkVisitActivity.class);
-        startActivity(intent);
+        if (!getLocation().equals("Select  Police Station")) {
+            Intent intent = new Intent(DashActivity.this, MarkVisitActivity.class);
+            startActivity(intent);
+        }
+        else {
+            Toast.makeText(getApplicationContext(),"SELECT POLICE STATION",Toast.LENGTH_LONG).show();
+        }
     }
     public void onClickUpdateSenior(View view){
-        Intent intent = new Intent(DashActivity.this,UpdateSeniorActivity.class);
-        startActivity(intent);
+        if (!getLocation().equals("Select  Police Station")) {
+            Intent intent = new Intent(DashActivity.this, MyVerificationActivity.class);
+            startActivity(intent);
+        }
+        else {
+            Toast.makeText(getApplicationContext(),"SELECT POLICE STATION",Toast.LENGTH_LONG).show();
+        }
     }
     private ArrayList<CustomItem> getCustomList() {
         customList = new ArrayList<>();

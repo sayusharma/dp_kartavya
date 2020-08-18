@@ -84,8 +84,8 @@ public class VisitActivity extends AppCompatActivity {
             int year = cldr.get(Calendar.YEAR);
             String currentDate = day + "/" + (month+1) + "/" + year;
             String currentTime = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
-            Visit visit = new Visit(name.getText().toString(),currentPhotoDownloadableUrl,"Ayush SHarma",currentDate,currentTime);
-            databaseReference.child(mob.getText().toString()).child(String.valueOf(System.currentTimeMillis())).setValue(visit).addOnSuccessListener(new OnSuccessListener<Void>() {
+            Visit visit = new Visit(name.getText().toString(),CurrentVisit.currentVisit.getBasicDetails().getPersonalDetails().getMob(),CurrentVisit.currentVisit.getBasicDetails().getPersonalDetails().getAddress(),currentPhotoDownloadableUrl,"Ayush SHarma",currentDate,currentTime);
+            databaseReference.child(String.valueOf(System.currentTimeMillis())).setValue(visit).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
                     Toast.makeText(getApplicationContext(),"VISIT UPDATED",Toast.LENGTH_LONG).show();
@@ -127,6 +127,7 @@ public class VisitActivity extends AppCompatActivity {
     public void onClickBackVisit(View view){
         Intent intent = new Intent(VisitActivity.this,MarkVisitActivity.class);
         startActivity(intent);
+        finish();
     }
     private void setDownloadableUrl(Uri uri) {
         final StorageReference reference;

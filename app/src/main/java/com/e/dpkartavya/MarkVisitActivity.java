@@ -163,6 +163,7 @@ public class MarkVisitActivity extends AppCompatActivity implements SeniorAdapte
     public void onClickBackMarkVisit(View view){
         Intent intent = new Intent(MarkVisitActivity.this,DashActivity.class);
         startActivity(intent);
+        finish();
     }
     @Override
     public void onClick(int position) {

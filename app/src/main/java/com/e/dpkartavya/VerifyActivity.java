@@ -68,7 +68,6 @@ import java.util.UUID;
 
 public class VerifyActivity extends AppCompatActivity {
     private static final int LOCATION_REQ_CODE = 1021;
-    Toolbar propertytoolbar;
     Context context;
     private String currentDate;
     private PersonalDetails personalDetails;
@@ -168,7 +167,6 @@ public class VerifyActivity extends AppCompatActivity {
     private void initialiseEditTexts() {
 
 
-
         drName=findViewById(R.id.driverName);
         drAddr=findViewById(R.id.driverAdd);
         drVerNo = findViewById(R.id.driverVerNo);
@@ -196,6 +194,7 @@ public class VerifyActivity extends AppCompatActivity {
     public void onClickBackVerify(View view){
         Intent intent = new Intent(VerifyActivity.this,DashActivity.class);
         startActivity(intent);
+        finish();
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

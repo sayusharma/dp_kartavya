@@ -159,12 +159,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:adjustViewBounds = "true"
-                    android:src="@drawable/update" />
+                    android:src="@drawable/view_all" />
                 <ImageView
                     android:id="@+id/criminal_data"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_baseline_add_24"
+                    android:src="@drawable/ic_baseline_arrow_forward_24"
                     android:layout_gravity="end|bottom"
                     android:layout_marginEnd="20dp"
                     android:layout_marginBottom="10dp"/>
