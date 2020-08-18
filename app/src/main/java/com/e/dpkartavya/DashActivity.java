@@ -2,25 +2,45 @@ package com.e.dpkartavya;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.e.dpkartavya.Common.CurrentUser;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 public class DashActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private customAdapter adapter;
     private Spinner locationspinner;
+    private ImageView imageView;
     private ArrayList<CustomItem> customList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dash);
         locationspinner = findViewById(R.id.locationspinner);
+        imageView = findViewById(R.id.profile_pic);
+        final ProgressDialog p = new ProgressDialog(this);
+        p.setMessage("Please Wait...");
+        p.show();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                p.dismiss();
+            }
+        },2000);
+        Picasso.get()
+                .load(CurrentUser.currentUser.getPhoto())
+                .into(imageView);
         customList = getCustomList();
         adapter = new customAdapter(this, customList);
         locationspinner.setAdapter(adapter);
@@ -51,13 +71,8 @@ public class DashActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
     public void onClickUpdateSenior(View view){
-        if (!getLocation().equals("Select  Police Station")) {
             Intent intent = new Intent(DashActivity.this, MyVerificationActivity.class);
             startActivity(intent);
-        }
-        else {
-            Toast.makeText(getApplicationContext(),"SELECT POLICE STATION",Toast.LENGTH_LONG).show();
-        }
     }
     private ArrayList<CustomItem> getCustomList() {
         customList = new ArrayList<>();

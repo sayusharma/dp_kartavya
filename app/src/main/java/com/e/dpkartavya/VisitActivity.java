@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.e.dpkartavya.Common.CurrentUser;
 import com.e.dpkartavya.Common.CurrentVisit;
 import com.e.dpkartavya.Model.Visit;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -84,7 +85,7 @@ public class VisitActivity extends AppCompatActivity {
             int year = cldr.get(Calendar.YEAR);
             String currentDate = day + "/" + (month+1) + "/" + year;
             String currentTime = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
-            Visit visit = new Visit(name.getText().toString(),CurrentVisit.currentVisit.getBasicDetails().getPersonalDetails().getMob(),CurrentVisit.currentVisit.getBasicDetails().getPersonalDetails().getAddress(),currentPhotoDownloadableUrl,"Ayush SHarma",currentDate,currentTime);
+            Visit visit = new Visit(name.getText().toString(),CurrentVisit.currentVisit.getBasicDetails().getPersonalDetails().getMob(),CurrentVisit.currentVisit.getBasicDetails().getPersonalDetails().getAddress(),currentPhotoDownloadableUrl, CurrentUser.currentUser.getEmail(),currentDate,currentTime);
             databaseReference.child(String.valueOf(System.currentTimeMillis())).setValue(visit).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {

@@ -29,6 +29,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.e.dpkartavya.Common.CurrentUser;
 import com.e.dpkartavya.Model.AdditionalDetails;
 import com.e.dpkartavya.Model.BasicDetails;
 import com.e.dpkartavya.Model.Loc;
@@ -426,7 +427,7 @@ public class VerifyActivity extends AppCompatActivity {
                     ,getChecked(Ba),getChecked(Bb),getChecked(Bc),getChecked(Bd),getChecked(Be),getChecked(Bf));
             currentTime = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
             location = new Loc(String.valueOf(latitude),String.valueOf(longitude));
-            moreDetails = new MoreDetails(location,"ayush",currentDate,currentTime);
+            moreDetails = new MoreDetails(location, CurrentUser.currentUser.getEmail(),currentDate,currentTime);
             VerifySnr verifySnr = new VerifySnr(basicDetails,serviceProviders,securityChecks,moreDetails);
             String id = basicDetails.getPersonalDetails().getMob();
             databaseReference.child(id).setValue(verifySnr).addOnSuccessListener(new OnSuccessListener<Void>() {
