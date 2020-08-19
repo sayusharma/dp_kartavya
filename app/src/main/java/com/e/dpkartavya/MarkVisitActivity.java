@@ -14,6 +14,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.e.dpkartavya.Common.CurrentVisit;
@@ -37,6 +38,7 @@ public class MarkVisitActivity extends AppCompatActivity implements SeniorAdapte
     private DatabaseReference databaseReference;
     private RecyclerView recyclerView;
     private EditText editText;
+    private ImageView cancelName,cancelMob;
     private Context context;
     private ArrayList<VerifySnr> cuurentArrayList;
     private SeniorAdapter orderAdapter;
@@ -51,6 +53,8 @@ public class MarkVisitActivity extends AppCompatActivity implements SeniorAdapte
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         editText = findViewById(R.id.searchByNameEditText);
         mobEditText = findViewById(R.id.searchByMobEditText);
+        cancelMob = findViewById(R.id.cancelMob);
+        cancelName = findViewById(R.id.cancelName);
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -64,6 +68,11 @@ public class MarkVisitActivity extends AppCompatActivity implements SeniorAdapte
 
             @Override
             public void afterTextChanged(Editable s) {
+                if (s.toString().equals("")){
+                    cancelName.setVisibility(View.INVISIBLE);
+                }
+                else
+                    cancelName.setVisibility(View.VISIBLE);
                 filterResults(s);
 
             }
@@ -81,6 +90,11 @@ public class MarkVisitActivity extends AppCompatActivity implements SeniorAdapte
 
             @Override
             public void afterTextChanged(Editable s) {
+                if (s.toString().equals("")){
+                    cancelMob.setVisibility(View.INVISIBLE);
+                }
+                else
+                    cancelMob.setVisibility(View.VISIBLE);
                 filterResultsForMob(s);
             }
         });
@@ -101,7 +115,7 @@ public class MarkVisitActivity extends AppCompatActivity implements SeniorAdapte
                 }
                 if (arrayList.isEmpty()){
                     progressDialog.dismiss();
-                    Toast.makeText(getApplicationContext(),"NO SENIOR CITIZENS FOUND",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"NO SENIOR CITIZENS FOUND",Toast.LENGTH_SHORT).show();
                 }
                 else {
                     setAdapter();
@@ -116,7 +130,14 @@ public class MarkVisitActivity extends AppCompatActivity implements SeniorAdapte
         });
 
     }
-
+    public void onClickCancelName(View view){
+        cancelName.setVisibility(View.INVISIBLE);
+        editText.setText("");
+    }
+    public void onClickCancelMob(View view){
+        cancelMob.setVisibility(View.INVISIBLE);
+        mobEditText.setText("");
+    }
     private void setAdapter() {
         orderAdapter = new SeniorAdapter(getApplicationContext(), arrayList,this);
         cuurentArrayList = arrayList;
@@ -134,7 +155,7 @@ public class MarkVisitActivity extends AppCompatActivity implements SeniorAdapte
         }
         if (filterList.isEmpty()){
             cuurentArrayList = arrayList;
-            Toast.makeText(getApplicationContext(),"NO SENIOR CITIZENS FOUND",Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(),"NO SENIOR CITIZENS FOUND",Toast.LENGTH_SHORT).show();
         }
         else{
             cuurentArrayList = filterList;
@@ -152,7 +173,7 @@ public class MarkVisitActivity extends AppCompatActivity implements SeniorAdapte
         }
         if (filterList.isEmpty()){
             cuurentArrayList = arrayList;
-            Toast.makeText(getApplicationContext(),"NO SENIOR CITIZENS FOUND",Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(),"NO SENIOR CITIZENS FOUND",Toast.LENGTH_SHORT).show();
         }
         else{
             cuurentArrayList = filterList;

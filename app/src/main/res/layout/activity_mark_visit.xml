@@ -57,6 +57,16 @@
             android:background="@drawable/search_edittext"
             android:layout_width="match_parent"
             android:layout_height="35dp"/>
+        <ImageView
+            android:visibility="invisible"
+            android:onClick="onClickCancelName"
+            android:id="@+id/cancelName"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:layout_width="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_baseline_cancel_24"
+            android:layout_height="wrap_content"/>
     </RelativeLayout>
     <RelativeLayout
         android:layout_marginTop="15dp"
@@ -81,6 +91,16 @@
             android:background="@drawable/search_edittext"
             android:layout_width="match_parent"
             android:layout_height="35dp"/>
+        <ImageView
+            android:visibility="invisible"
+            android:onClick="onClickCancelMob"
+            android:id="@+id/cancelMob"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:layout_width="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_baseline_cancel_24"
+            android:layout_height="wrap_content"/>
     </RelativeLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
