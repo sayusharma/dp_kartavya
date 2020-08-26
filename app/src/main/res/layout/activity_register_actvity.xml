@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@color/bgcolor"
+    android:layout_height="match_parent"
+    tools:context=".RegisterActvity">
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="#ffffff"
+        android:elevation="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="45dp"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/logo" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/open_sans_bold"
+                android:lineSpacingExtra="32sp"
+                android:text="Verification Portal"
+                android:layout_centerInParent="true"
+                android:textColor="#1F2144"
+                android:textSize="16sp" />
+            <ImageView
+                android:onClick="onClickCancelRegister"
+                android:layout_marginRight="10dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:layout_width="wrap_content"
+                android:src="@drawable/ic_baseline_cancel_40"
+                android:layout_height="wrap_content"/>
+        </RelativeLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+    <ScrollView
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_below="@id/toolbar"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:paddingBottom="30dp"
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
+            <RelativeLayout
+                android:layout_marginTop="15dp"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:src="@drawable/ic_baseline_account_box_24"
+                    android:layout_width="200dp"
+                    android:id="@+id/userPhoto"
+                    android:layout_height="200dp"/>
+            </RelativeLayout>
+            <LinearLayout
+                android:id="@+id/tenant_linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginStart="40dp"
+                android:onClick="onClickUploadProfilePhoto"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="40dp"
+                android:background="@drawable/add_image_design"
+                android:elevation="0dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/criminaltoolbar">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:padding="8dp"
+                    android:src="@drawable/addimage" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="5dp"
+                    android:fontFamily="@font/open_sans_semibold"
+                    android:text="Upload Image"
+                    android:textColor="#1f2144"
+                    android:textSize="16sp" />
+            </LinearLayout>
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="36dp"
+                android:layout_marginTop="16dp"
+                android:textSize="12dp"
+                android:text="Full Name"
+                android:textColor="#1f2144"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout"></TextView>
+
+            <EditText
+                android:id="@+id/userName"
+                android:layout_width="match_parent"
+                android:layout_height="43dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="2dp"
+                android:textColorHint="#bdbdbd"
+                android:layout_marginEnd="34dp"
+                android:inputType="textCapSentences"
+                android:backgroundTint="#bdbdbd"
+                android:fontFamily="@font/open_sans_semibold"
+                android:hint="Enter Full Name"
+                android:textColor="#1f2144"
+                android:maxLines="1"
+                android:textSize="16sp" />
+            <TextView
+                android:id="@+id/textView34"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="36dp"
+                android:layout_marginTop="16dp"
+                android:textSize="12dp"
+                android:text="Mobile Number"
+                android:textColor="#1f2144"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout"></TextView>
+
+            <EditText
+                android:id="@+id/userMob"
+                android:layout_width="match_parent"
+                android:layout_height="43dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="2dp"
+                android:textColorHint="#bdbdbd"
+                android:layout_marginEnd="34dp"
+                android:inputType="number"
+                android:maxLength="10"
+                android:backgroundTint="#bdbdbd"
+                android:fontFamily="@font/open_sans_semibold"
+                android:hint="Enter Mobile Number"
+                android:textColor="#1f2144"
+                android:maxLines="1"
+                android:textSize="16sp" />
+            <TextView
+                android:id="@+id/textView334"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="36dp"
+                android:layout_marginTop="16dp"
+                android:textSize="12dp"
+                android:text="Confirm Mobile Number"
+                android:textColor="#1f2144"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout"></TextView>
+
+            <EditText
+                android:id="@+id/userMobConfirm"
+                android:layout_width="match_parent"
+                android:layout_height="43dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="2dp"
+                android:textColorHint="#bdbdbd"
+                android:layout_marginEnd="34dp"
+                android:inputType="number"
+                android:maxLength="10"
+                android:backgroundTint="#bdbdbd"
+                android:fontFamily="@font/open_sans_semibold"
+                android:hint="Re-enter Mobile Number"
+                android:textColor="#1f2144"
+                android:maxLines="1"
+                android:textSize="16sp" />
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="36dp"
+                android:layout_marginTop="16dp"
+                android:textSize="12dp"
+                android:text="Police Station"
+                android:textColor="#1f2144"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout"></TextView>
+
+            <EditText
+                android:id="@+id/userPoliceStation"
+                android:layout_width="match_parent"
+                android:layout_height="43dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="2dp"
+                android:textColorHint="#bdbdbd"
+                android:layout_marginEnd="34dp"
+                android:inputType="textCapSentences"
+                android:backgroundTint="#bdbdbd"
+                android:fontFamily="@font/open_sans_semibold"
+                android:hint="Enter Police Station"
+                android:textColor="#1f2144"
+                android:maxLines="1"
+                android:textSize="16sp" />
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="36dp"
+                android:layout_marginTop="16dp"
+                android:textSize="12dp"
+                android:text="Rank"
+                android:textColor="#1f2144"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout"></TextView>
+
+            <EditText
+                android:id="@+id/userRank"
+                android:layout_width="match_parent"
+                android:layout_height="43dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="2dp"
+                android:textColorHint="#bdbdbd"
+                android:layout_marginEnd="34dp"
+                android:inputType="textCapSentences"
+                android:backgroundTint="#bdbdbd"
+                android:fontFamily="@font/open_sans_semibold"
+                android:hint="Enter Rank"
+                android:textColor="#1f2144"
+                android:maxLines="1"
+                android:textSize="16sp" />
+            <TextView
+                android:id="@+id/textVie45w3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="36dp"
+                android:layout_marginTop="16dp"
+                android:textSize="12dp"
+                android:text="Set Password"
+                android:textColor="#1f2144"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout"></TextView>
+
+            <EditText
+                android:id="@+id/userPass"
+                android:layout_width="match_parent"
+                android:layout_height="43dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="2dp"
+                android:textColorHint="#bdbdbd"
+                android:layout_marginEnd="34dp"
+                android:inputType="text"
+                android:backgroundTint="#bdbdbd"
+                android:fontFamily="@font/open_sans_semibold"
+                android:hint="Enter Password"
+                android:textColor="#1f2144"
+                android:maxLines="1"
+                android:textSize="16sp" />
+            <TextView
+                android:id="@+id/textViewr33"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="36dp"
+                android:layout_marginTop="16dp"
+                android:textSize="12dp"
+                android:text="Confirm Password"
+                android:textColor="#1f2144"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout"></TextView>
+
+            <EditText
+                android:id="@+id/userConPass"
+                android:layout_width="match_parent"
+                android:layout_height="43dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="2dp"
+                android:textColorHint="#bdbdbd"
+                android:layout_marginEnd="34dp"
+                android:inputType="textPassword"
+                android:backgroundTint="#bdbdbd"
+                android:fontFamily="@font/open_sans_semibold"
+                android:hint="Confirm Password"
+                android:textColor="#1f2144"
+                android:maxLines="1"
+                android:textSize="16sp" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Register Now"
+                android:layout_marginTop="20dp"
+                android:textAllCaps="false"
+                android:layout_marginStart="33dp"
+                android:onClick="onClickRegisterNowDetails"
+                android:layout_marginEnd="32dp"
+                android:padding="6dp"
+                android:textSize="16sp"
+                android:layout_marginBottom="20dp"
+                android:background="@color/colorPrimary"
+                android:textColor="#ffffff"/>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

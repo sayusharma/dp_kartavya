@@ -31,6 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class MarkVisitActivity extends AppCompatActivity implements SeniorAdapter.OnItemClickListener{
     private FirebaseDatabase firebaseDatabase;
@@ -71,9 +72,11 @@ public class MarkVisitActivity extends AppCompatActivity implements SeniorAdapte
                 if (s.toString().equals("")){
                     cancelName.setVisibility(View.INVISIBLE);
                 }
-                else
+                else{
                     cancelName.setVisibility(View.VISIBLE);
+                }
                 filterResults(s);
+
 
             }
         });
@@ -103,7 +106,7 @@ public class MarkVisitActivity extends AppCompatActivity implements SeniorAdapte
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading...");
         progressDialog.show();
-        databaseReference = firebaseDatabase.getReference("snr_czn");
+        databaseReference = firebaseDatabase.getReference("snr_czn").child(Objects.requireNonNull(getIntent().getStringExtra("police")));
         //Query query = databaseReference.orderByKey();
         databaseReference.orderByChild("basicDetails/personalDetails/name").addValueEventListener(new ValueEventListener() {
             @Override
@@ -155,7 +158,7 @@ public class MarkVisitActivity extends AppCompatActivity implements SeniorAdapte
         }
         if (filterList.isEmpty()){
             cuurentArrayList = arrayList;
-            Toast.makeText(getApplicationContext(),"NO SENIOR CITIZENS FOUND",Toast.LENGTH_SHORT).show();
+           // Toast.makeText(getApplicationContext(),"NO SENIOR CITIZENS FOUND",Toast.LENGTH_SHORT).show();
         }
         else{
             cuurentArrayList = filterList;
@@ -173,7 +176,7 @@ public class MarkVisitActivity extends AppCompatActivity implements SeniorAdapte
         }
         if (filterList.isEmpty()){
             cuurentArrayList = arrayList;
-            Toast.makeText(getApplicationContext(),"NO SENIOR CITIZENS FOUND",Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(),"NO SENIOR CITIZENS FOUND",Toast.LENGTH_SHORT).show();
         }
         else{
             cuurentArrayList = filterList;

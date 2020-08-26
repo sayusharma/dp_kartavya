@@ -16,7 +16,7 @@ public class SplashActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (SaveSharedPreference.getUserName(SplashActivity.this).length()!=0){
+                if (!SaveSharedPreference.getUserName(SplashActivity.this).equals("null")){
                     startActivity(new Intent(SplashActivity.this,DashActivity.class));
                     finish();
                 }

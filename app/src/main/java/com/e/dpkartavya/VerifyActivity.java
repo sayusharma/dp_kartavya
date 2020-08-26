@@ -65,6 +65,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 
 public class VerifyActivity extends AppCompatActivity {
@@ -427,10 +428,10 @@ public class VerifyActivity extends AppCompatActivity {
                     ,getChecked(Ba),getChecked(Bb),getChecked(Bc),getChecked(Bd),getChecked(Be),getChecked(Bf));
             currentTime = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
             location = new Loc(String.valueOf(latitude),String.valueOf(longitude));
-            moreDetails = new MoreDetails(location, CurrentUser.currentUser.getEmail(),currentDate,currentTime);
+            moreDetails = new MoreDetails(location, CurrentUser.currentUser.getMob(),currentDate,currentTime);
             VerifySnr verifySnr = new VerifySnr(basicDetails,serviceProviders,securityChecks,moreDetails);
             String id = basicDetails.getPersonalDetails().getMob();
-            databaseReference.child(id).setValue(verifySnr).addOnSuccessListener(new OnSuccessListener<Void>() {
+            databaseReference.child(Objects.requireNonNull(getIntent().getStringExtra("police"))).child(id).setValue(verifySnr).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
                     Toast.makeText(getApplicationContext(),"SUBMIT SUCCESSFUL",Toast.LENGTH_LONG).show();

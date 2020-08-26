@@ -27,6 +27,7 @@
     <string name="Bd">D. Whether neighbours/RWA are in regular touch\t\t</string>
     <string name="Be">E. Whether BEAT police officer is regularly visiting the house\t\t</string>
     <string name="Bf">F. Lighting in surrounding Area/Street Lighting\t\t</string>
+    <string name="register"><u>REGISTER NOW</u></string>
     <string-array name="verification">
         <item>Select Verification Status</item>
         <item>Verified</item>

@@ -66,6 +66,8 @@ public class LoginActivity extends AppCompatActivity {
                                 user = dataSnapshot.child(email).getValue(User.class);
                                 CurrentUser.currentUser = user;
                                 if (user.getPass().equals(pass)){
+                                    SaveSharedPreference.setUserName(getApplicationContext(),user.getMob());
+                                    SaveSharedPreference.setPhoto(getApplicationContext(),user.getPhoto());
                                     Intent intent = new Intent(LoginActivity.this, DashActivity.class);
                                     startActivity(intent);
                                     finish();
@@ -95,6 +97,10 @@ public class LoginActivity extends AppCompatActivity {
             return false;
         }
         else return true;
+    }
+    public void onClickRegisterNow(View view){
+        Intent intent = new Intent(LoginActivity.this,RegisterActvity.class);
+        startActivity(intent);
     }
     public String encodeEmail(String s){
         return s.replace(".",",");
