@@ -10,14 +10,18 @@ import androidx.core.app.ActivityCompat;
 import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -78,15 +82,13 @@ public class VerifyActivity extends AppCompatActivity {
     private FusedLocationProviderClient fusedLocationClient;
     private RelativeDetails relativeDetails;
     private BasicDetails basicDetails;
-    private ServiceProvider driver,watchman,servant,tenant,sweeper,carCleaner;
-    private OtherServiceProvider others;
     private MoreDetails moreDetails;
     EditText name,dob,addr,mob,email,sname,sdob,wedding,from,year,field,children,residingWith,health,lpVisit,freeTime,rname,relation,rmob,raddr;
     private ServiceProviders serviceProviders;
     private SecurityChecks securityChecks;
     private SwitchCompat Aaa,Aab,Aac,Aad,Aae,Aaf,Aag,Aba,Abb,Abc,Abd,Abe,Abf,Abg,Ba,Bb,Bc,Bd,Be,Bf;
     private String retired = "";
-    TabLayout tablayout;
+    private TabLayout tablayout;
     private Spinner dr,wa,ser,ten,swe,car,oth;
     private String currentTime;
     ViewPager viewPager;
@@ -152,7 +154,7 @@ public class VerifyActivity extends AppCompatActivity {
         int month = cldr.get(Calendar.MONTH);
         int year = cldr.get(Calendar.YEAR);
         currentDate = day + "/" + (month+1) + "/" + year;
-
+        //Checking if gps is enabled
 
     }
 
@@ -210,6 +212,8 @@ public class VerifyActivity extends AppCompatActivity {
                 break;
         }
     }
+
+
     private void getCurrentLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -431,20 +435,22 @@ public class VerifyActivity extends AppCompatActivity {
             moreDetails = new MoreDetails(location, CurrentUser.currentUser.getMob(),currentDate,currentTime);
             VerifySnr verifySnr = new VerifySnr(basicDetails,serviceProviders,securityChecks,moreDetails);
             String id = basicDetails.getPersonalDetails().getMob();
-            databaseReference.child(Objects.requireNonNull(getIntent().getStringExtra("police"))).child(id).setValue(verifySnr).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    Toast.makeText(getApplicationContext(),"SUBMIT SUCCESSFUL",Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(VerifyActivity.this,DashActivity.class);
 
-                    startActivity(intent);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(getApplicationContext(),"ERROR WHILE SUBMITTING. TRY AGAIN",Toast.LENGTH_LONG).show();
-                }
-            });
+                databaseReference.child(Objects.requireNonNull(getIntent().getStringExtra("police"))).child(id).setValue(verifySnr).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(getApplicationContext(), "SUBMIT SUCCESSFUL", Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(VerifyActivity.this, DashActivity.class);
+                        startActivity(intent);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getApplicationContext(), "ERROR WHILE SUBMITTING. TRY AGAIN", Toast.LENGTH_LONG).show();
+                    }
+                });
+
+
         }catch (NullPointerException n){
             n.printStackTrace();
             Toast.makeText(getApplicationContext(),"PLEASE SAVE DETAILS",Toast.LENGTH_LONG).show();
@@ -452,6 +458,7 @@ public class VerifyActivity extends AppCompatActivity {
 
 
     }
+
     public void onClickGenderTenant(View view){
         TextView textFemale = findViewById(R.id.tenant_female_text);
         TextView textMale =findViewById(R.id.tenant_male_text);

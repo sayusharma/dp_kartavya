@@ -35,5 +35,6 @@ public class SaveSharedPreference {
     public static void clearPreference(Context context){
         SharedPreferences.Editor editor = getSharedPreferences(context).edit();
         editor.clear();
+        editor.commit();
     }
 }

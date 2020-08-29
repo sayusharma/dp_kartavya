@@ -2,7 +2,6 @@ package com.e.dpkartavya;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,18 +16,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.e.dpkartavya.Adapter.SeniorAdapter;
 import com.e.dpkartavya.Common.CurrentVisit;
-import com.e.dpkartavya.Interface.ItemClickListener;
 import com.e.dpkartavya.Model.VerifySnr;
-import com.e.dpkartavya.ViewHolder.VerirySnrViewHolder;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -70,9 +65,11 @@ public class MarkVisitActivity extends AppCompatActivity implements SeniorAdapte
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.toString().equals("")){
+                    mobEditText.setEnabled(true);
                     cancelName.setVisibility(View.INVISIBLE);
                 }
                 else{
+                    mobEditText.setEnabled(false);
                     cancelName.setVisibility(View.VISIBLE);
                 }
                 filterResults(s);
@@ -94,10 +91,13 @@ public class MarkVisitActivity extends AppCompatActivity implements SeniorAdapte
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.toString().equals("")){
+                    editText.setEnabled(true);
                     cancelMob.setVisibility(View.INVISIBLE);
                 }
-                else
+                else {
                     cancelMob.setVisibility(View.VISIBLE);
+                    editText.setEnabled(false);
+                }
                 filterResultsForMob(s);
             }
         });
@@ -193,6 +193,7 @@ public class MarkVisitActivity extends AppCompatActivity implements SeniorAdapte
     public void onClick(int position) {
         Intent intent = new Intent(MarkVisitActivity.this,VisitActivity.class);
         CurrentVisit.currentVisit = cuurentArrayList.get(position);
+        intent.putExtra("police",getIntent().getStringExtra("police"));
         startActivity(intent);
     }
 }

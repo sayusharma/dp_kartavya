@@ -128,4 +128,15 @@
             android:layout_height="wrap_content"/>
 
     </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:textColor="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center_horizontal"
+        android:layout_marginBottom="30dp"
+        android:text="Powered by House Of Apps"
+        android:fontFamily="@font/open_sans_semibold"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="wrap_content"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

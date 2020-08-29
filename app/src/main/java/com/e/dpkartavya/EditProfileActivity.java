@@ -39,7 +39,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private StorageReference storageReference;
     private Uri currentPhotoUri;
     private ImageView imageView;
-    private String currentPhotoDownloadableUrl="";
+    private String currentPhotoDownloadableUrl;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +49,7 @@ public class EditProfileActivity extends AppCompatActivity {
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = firebaseStorage.getReference();
         imageView = findViewById(R.id.euserPhoto);
+        currentPhotoDownloadableUrl = CurrentUser.currentUser.getPhoto();
         name = findViewById(R.id.euserName);
         rank = findViewById(R.id.euserRank);
         police = findViewById(R.id.euserPoliceStation);
@@ -70,7 +71,7 @@ public class EditProfileActivity extends AppCompatActivity {
             databaseReference.child(CurrentUser.currentUser.getMob()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
-                    Toast.makeText(getApplicationContext(),"PLEASE WAIT UNTIL YOUR SIGN UP REQUEST IS REVIEWED!",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"CHANGES SAVED!",Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(EditProfileActivity.this,DashActivity.class);
                     startActivity(intent);
                     finish();
@@ -88,7 +89,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private boolean validate() {
         if (TextUtils.isEmpty(name.getText()) ||
                 TextUtils.isEmpty(rank.getText() )|| TextUtils.isEmpty(police.getText())){
-            Toast.makeText(getApplicationContext(),"FILEDS CANNOT BE EMPTY!",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),"FIELDS CANNOT BE EMPTY!",Toast.LENGTH_SHORT).show();
             return false;
         }
         else {

@@ -35,14 +35,15 @@ public class MyProfile extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.my_profile);
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference("users");
+       // firebaseDatabase = FirebaseDatabase.getInstance();
+       // databaseReference = firebaseDatabase.getReference("users");
         logout = findViewById(R.id.btnLogout);
         edit = findViewById(R.id.btnEditProfile);
         change = findViewById(R.id.btnChangePassword);
         name = findViewById(R.id.profile_name);
         design = findViewById(R.id.designation);
         imageView = findViewById(R.id.profilePhoto);
+        //Toast.makeText(getApplicationContext(),""+CurrentUser.currentUser.getName()+CurrentUser.currentUser.getPhoto(),Toast.LENGTH_LONG).show();
         Picasso.get().load(CurrentUser.currentUser.getPhoto()).into(imageView);
         name.setText(CurrentUser.currentUser.getName());
         design.setText(CurrentUser.currentUser.getRank());
@@ -53,7 +54,8 @@ public class MyProfile extends Activity {
         startActivity(intent);
     }
     public void onClickLogout(View view){
-        SaveSharedPreference.setUserName(getApplicationContext(),"null");
+        //SaveSharedPreference.setUserName(getApplicationContext(),"null");
+        SaveSharedPreference.clearPreference(this);
         CurrentUser.currentUser = null;
         Intent intent = new Intent(MyProfile.this,LoginActivity.class);
         startActivity(intent);

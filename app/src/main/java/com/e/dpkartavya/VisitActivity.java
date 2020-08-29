@@ -48,6 +48,7 @@ public class VisitActivity extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private ImageView img;
     private EditText notes;
+    private String plcStn;
     private TextView name,mob;
     private String currentPhotoDownloadableUrl="";
 
@@ -60,6 +61,7 @@ public class VisitActivity extends AppCompatActivity {
         databaseReference = firebaseDatabase.getReference("visits");
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
+        plcStn = getIntent().getStringExtra("police");
         notes = findViewById(R.id.visitNotes);
         img = findViewById(R.id.visitImg);
         name = findViewById(R.id.visitName);
@@ -85,13 +87,15 @@ public class VisitActivity extends AppCompatActivity {
             int year = cldr.get(Calendar.YEAR);
             String currentDate = day + "/" + (month+1) + "/" + year;
             String currentTime = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
-            Visit visit = new Visit(name.getText().toString(),CurrentVisit.currentVisit.getBasicDetails().getPersonalDetails().getMob(),CurrentVisit.currentVisit.getBasicDetails().getPersonalDetails().getAddress(),currentPhotoDownloadableUrl, CurrentUser.currentUser.getMob(),currentDate,currentTime);
+            Visit visit = new Visit(name.getText().toString(),CurrentVisit.currentVisit.getBasicDetails().getPersonalDetails().getMob(),CurrentVisit.currentVisit.getBasicDetails().getPersonalDetails().getAddress(),currentPhotoDownloadableUrl, CurrentUser.currentUser.getMob(),currentDate,currentTime,notes.getText().toString());
             databaseReference.child(String.valueOf(System.currentTimeMillis())).setValue(visit).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
                     Toast.makeText(getApplicationContext(),"VISIT UPDATED",Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(VisitActivity.this,MarkVisitActivity.class);
+                    intent.putExtra("police",plcStn);
                     startActivity(intent);
+                    finish();
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -127,6 +131,7 @@ public class VisitActivity extends AppCompatActivity {
     }
     public void onClickBackVisit(View view){
         Intent intent = new Intent(VisitActivity.this,MarkVisitActivity.class);
+        intent.putExtra("police",plcStn);
         startActivity(intent);
         finish();
     }

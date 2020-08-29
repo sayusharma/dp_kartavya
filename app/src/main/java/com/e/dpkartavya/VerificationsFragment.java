@@ -1,7 +1,9 @@
 package com.e.dpkartavya;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,24 +13,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.e.dpkartavya.Adapter.VerificationAdapter;
 import com.e.dpkartavya.Common.CurrentUser;
-import com.e.dpkartavya.Interface.ItemClickListener;
 import com.e.dpkartavya.Model.VerifySnr;
-import com.e.dpkartavya.ViewHolder.VerificationHolder;
-import com.e.dpkartavya.ViewHolder.VerirySnrViewHolder;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.squareup.picasso.Picasso;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link VerificationsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class VerificationsFragment extends Fragment {
+public class VerificationsFragment extends Fragment implements VerificationAdapter.OnItemClickListener {
     private RecyclerView recyclerView;
     private FirebaseDatabase firebaseDatabase;
+    private VerificationAdapter verificationAdapter;
+    private ArrayList<VerifySnr> arrayList;
     private DatabaseReference databaseReference;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -82,6 +87,39 @@ public class VerificationsFragment extends Fragment {
         recyclerView = view.findViewById(R.id.verificationRecycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setHasFixedSize(true);
+        arrayList = new ArrayList<>();
+        final ProgressDialog progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
+        //Query query = databaseReference.orderByKey();
+        databaseReference.orderByChild("moreDetails/date").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot dataSnapshot1: dataSnapshot.getChildren()){
+                    if(dataSnapshot1.child("moreDetails/officer").getValue().equals(CurrentUser.currentUser.getMob())){
+                        VerifySnr order = dataSnapshot1.getValue(VerifySnr.class);
+                        // Toast.makeText(getContext(),order.getName(),Toast.LENGTH_SHORT).show();
+                        arrayList.add(order);
+                    }
+
+                    //Toast.makeText(getContext(),"36",Toast.LENGTH_SHORT).show();
+                }
+                if (arrayList.isEmpty()){
+                    progressDialog.dismiss();
+                    // Toast.makeText(getContext(),"NO SENIOR CITIZENS FOUND",Toast.LENGTH_SHORT).show();
+                }
+                else {
+
+                    setAdapter();
+                    //Toast.makeText(getContext(),"IN2",Toast.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+        /**
         FirebaseRecyclerAdapter<VerifySnr, VerificationHolder> adapter = new FirebaseRecyclerAdapter<VerifySnr, VerificationHolder>(
                 VerifySnr.class,R.layout.item_verification,VerificationHolder.class,databaseReference.orderByChild("moreDetails/officer").equalTo(CurrentUser.currentUser.getMob())
         ) {
@@ -104,6 +142,18 @@ public class VerificationsFragment extends Fragment {
             }
         };
         recyclerView.setAdapter(adapter);
+         **/
         return view;
+    }
+    private void setAdapter() {
+        verificationAdapter = new VerificationAdapter(getContext(), arrayList,this);
+        //Toast.makeText(getContext(),"IN3",Toast.LENGTH_SHORT).show();
+        recyclerView.setAdapter(verificationAdapter);
+
+    }
+
+    @Override
+    public void onClick(int position) {
+        Toast.makeText(getContext(),"CAN'T ACCESS",Toast.LENGTH_SHORT).show();
     }
 }

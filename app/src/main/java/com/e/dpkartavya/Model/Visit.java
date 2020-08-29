@@ -1,7 +1,7 @@
 package com.e.dpkartavya.Model;
 
 public class Visit {
-    private String name,mob,addr,photo,police_officer,date,time;
+    private String name,mob,addr,photo,police_officer,date,time,notes;
     public Visit(){}
 
     public String getName() {
@@ -60,7 +60,15 @@ public class Visit {
         this.time = time;
     }
 
-    public Visit(String name, String mob, String addr, String photo, String police_officer, String date, String time) {
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public Visit(String name, String mob, String addr, String photo, String police_officer, String date, String time, String notes) {
         this.name = name;
         this.mob = mob;
         this.addr = addr;
@@ -68,5 +76,6 @@ public class Visit {
         this.police_officer = police_officer;
         this.date = date;
         this.time = time;
+        this.notes = notes;
     }
 }

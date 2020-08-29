@@ -90,6 +90,9 @@ public class BasicDetailsFragment extends Fragment {
                             }
                         }, year, month, day);
                 pickerSeniorDialog.show();
+                pickerSeniorDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+
+
             }
         });
         relSpouse.setOnClickListener(new View.OnClickListener() {
@@ -107,6 +110,7 @@ public class BasicDetailsFragment extends Fragment {
                             }
                         }, year, month, day);
                 pickerSpouseDialog.show();
+                pickerSpouseDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
             }
         });
         relWedding.setOnClickListener(new View.OnClickListener() {
@@ -124,6 +128,7 @@ public class BasicDetailsFragment extends Fragment {
                             }
                         }, year, month, day);
                 pickerWeddingDialog.show();
+                pickerWeddingDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
             }
         });
         return view;

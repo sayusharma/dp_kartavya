@@ -3,35 +3,38 @@ package com.e.dpkartavya;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.e.dpkartavya.Adapter.VisitAdapter;
 import com.e.dpkartavya.Common.CurrentUser;
-import com.e.dpkartavya.Interface.ItemClickListener;
-import com.e.dpkartavya.Model.VerifySnr;
 import com.e.dpkartavya.Model.Visit;
-import com.e.dpkartavya.ViewHolder.VerificationHolder;
-import com.e.dpkartavya.ViewHolder.VisitHolder;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.squareup.picasso.Picasso;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link VisitsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class VisitsFragment extends Fragment {
+public class VisitsFragment extends Fragment implements VisitAdapter.OnItemClickListener {
     private RecyclerView recyclerView;
     private FirebaseDatabase firebaseDatabase;
+    private VisitAdapter orderAdapter;
+    private ArrayList<Visit> currentList;
+    private ArrayList<Visit> arrayList;
     private DatabaseReference databaseReference;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -81,6 +84,44 @@ public class VisitsFragment extends Fragment {
         // Toast.makeText(getContext(),"YOU THERE",Toast.LENGTH_LONG).show();
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("visits");
+        arrayList = new ArrayList<>();
+        currentList = new ArrayList<>();
+        recyclerView = view.findViewById(R.id.visitRecycler);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setHasFixedSize(true);
+        final ProgressDialog progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
+        //Query query = databaseReference.orderByKey();
+        databaseReference.orderByChild("date").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot dataSnapshot1: dataSnapshot.getChildren()){
+                    if(dataSnapshot1.child("police_officer").getValue().equals(CurrentUser.currentUser.getMob())){
+                        Visit order = dataSnapshot1.getValue(Visit.class);
+                       // Toast.makeText(getContext(),order.getName(),Toast.LENGTH_SHORT).show();
+                        currentList.add(order);
+                    }
+
+                    //Toast.makeText(getContext(),"36",Toast.LENGTH_SHORT).show();
+                }
+                if (currentList.isEmpty()){
+                    progressDialog.dismiss();
+                   // Toast.makeText(getContext(),"NO SENIOR CITIZENS FOUND",Toast.LENGTH_SHORT).show();
+                }
+                else {
+
+                    setAdapter();
+                    //Toast.makeText(getContext(),"IN2",Toast.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
+        /**
         final ProgressDialog p = new ProgressDialog(getContext());
         p.setMessage("Loading....");
         p.show();
@@ -103,6 +144,7 @@ public class VisitsFragment extends Fragment {
                 verirySnrViewHolder.addr.setText(verifySnr.getAddr());
                 verirySnrViewHolder.time.setText(verifySnr.getTime());
                 verirySnrViewHolder.date.setText(verifySnr.getDate());
+                verirySnrViewHolder.notes.setText(verifySnr.getNotes());
                 Picasso.get()
                         .load(verifySnr.getPhoto())
                         .into(verirySnrViewHolder.img);
@@ -115,6 +157,18 @@ public class VisitsFragment extends Fragment {
             }
         };
         recyclerView.setAdapter(adapter);
+         **/
         return view;
+    }
+    private void setAdapter() {
+        orderAdapter = new VisitAdapter(getContext(), currentList,this);
+        //Toast.makeText(getContext(),"IN3",Toast.LENGTH_SHORT).show();
+        recyclerView.setAdapter(orderAdapter);
+
+    }
+
+    @Override
+    public void onClick(int position) {
+        Toast.makeText(getContext(),"CAN'T ACCESS",Toast.LENGTH_SHORT).show();
     }
 }

@@ -3,10 +3,15 @@ package com.e.dpkartavya;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -30,8 +35,11 @@ public class DashActivity extends AppCompatActivity implements AdapterView.OnIte
     private Spinner locationspinner;
     private ImageView imageView;
     private ArrayList<CustomItem> customList;
+    private boolean gps_enabled=false;
+    private boolean network_enabled = false;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
+    private User user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,11 +54,13 @@ public class DashActivity extends AppCompatActivity implements AdapterView.OnIte
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                CurrentUser.currentUser = dataSnapshot.child(SaveSharedPreference.getUserName(getApplicationContext())).getValue(User.class);
+                user = dataSnapshot.child(SaveSharedPreference.getUserName(getApplicationContext())).getValue(User.class);
+                CurrentUser.currentUser = user;
                 Picasso.get()
-                        .load(SaveSharedPreference.getPhoto(getApplicationContext()))
+                        .load(CurrentUser.currentUser.getPhoto())
                         .into(imageView);
                 p.dismiss();
+                //Toast.makeText(getApplicationContext(),""+CurrentUser.currentUser.getName(),Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -64,6 +74,34 @@ public class DashActivity extends AppCompatActivity implements AdapterView.OnIte
         locationspinner.setAdapter(adapter);
         locationspinner.setOnItemSelectedListener(this);
     }
+    private void locationEnabled () {
+
+        LocationManager lm = (LocationManager)
+                getSystemService(Context. LOCATION_SERVICE ) ;
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER ) ;
+        } catch (Exception e) {
+            e.printStackTrace() ;
+        }
+        try {
+            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER ) ;
+        } catch (Exception e) {
+            e.printStackTrace() ;
+        }
+        if (!gps_enabled && !network_enabled) {
+            new AlertDialog.Builder(DashActivity. this )
+                    .setMessage( "Please Enable GPS" )
+                    .setPositiveButton( "Settings", new
+                            DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick (DialogInterface paramDialogInterface , int paramInt) {
+                                    startActivity( new Intent(Settings. ACTION_LOCATION_SOURCE_SETTINGS )) ;
+                                }
+                            })
+                    .show() ;
+
+        }
+    }
     public void onClickProfilePhoto(View view){
         Intent intent = new Intent(DashActivity.this,MyProfile.class);
         startActivity(intent);
@@ -72,10 +110,22 @@ public class DashActivity extends AppCompatActivity implements AdapterView.OnIte
     }
     public void onClickVerify(View view)
     {
+        LocationManager lm = (LocationManager)
+                getSystemService(Context. LOCATION_SERVICE ) ;
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER ) ;
+        } catch (Exception e) {
+            e.printStackTrace() ;
+        }
         if (!getLocation().equals("Select  Police Station")){
-            Intent intent = new Intent(DashActivity.this, VerifyActivity.class);
-            intent.putExtra("police",getLocation());
-            startActivity(intent);
+           // locationEnabled();
+            if (gps_enabled){
+                Intent intent = new Intent(DashActivity.this, VerifyActivity.class);
+                intent.putExtra("police",getLocation());
+                startActivity(intent);
+            }
+            else locationEnabled();
+
         }
         else {
             Toast.makeText(getApplicationContext(),"SELECT POLICE STATION",Toast.LENGTH_LONG).show();
