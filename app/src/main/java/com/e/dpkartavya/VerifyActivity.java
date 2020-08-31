@@ -18,6 +18,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -72,7 +73,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 
-public class VerifyActivity extends AppCompatActivity {
+public class VerifyActivity extends AppCompatActivity implements LocationListener {
     private static final int LOCATION_REQ_CODE = 1021;
     Context context;
     private String currentDate;
@@ -83,24 +84,26 @@ public class VerifyActivity extends AppCompatActivity {
     private RelativeDetails relativeDetails;
     private BasicDetails basicDetails;
     private MoreDetails moreDetails;
-    EditText name,dob,addr,mob,email,sname,sdob,wedding,from,year,field,children,residingWith,health,lpVisit,freeTime,rname,relation,rmob,raddr;
+    EditText name, dob, addr, mob, email, sname, sdob, wedding, from, year, field, children, residingWith, health, lpVisit, freeTime, rname, relation, rmob, raddr;
     private ServiceProviders serviceProviders;
     private SecurityChecks securityChecks;
-    private SwitchCompat Aaa,Aab,Aac,Aad,Aae,Aaf,Aag,Aba,Abb,Abc,Abd,Abe,Abf,Abg,Ba,Bb,Bc,Bd,Be,Bf;
+    private SwitchCompat Aaa, Aab, Aac, Aad, Aae, Aaf, Aag, Aba, Abb, Abc, Abd, Abe, Abf, Abg, Ba, Bb, Bc, Bd, Be, Bf;
     private String retired = "";
     private TabLayout tablayout;
-    private Spinner dr,wa,ser,ten,swe,car,oth;
+    private Spinner dr, wa, ser, ten, swe, car, oth;
     private String currentTime;
     ViewPager viewPager;
     private Loc location;
-    private String teVerStatus,drVerStatus,wVerStatus,serVerStatus,swVerStatus,carVerStatus,otVerStatus;
-    private EditText drName,drAddr,drVerNo,wName,wAddr,wVerNo,serName,serAddr,serVerNo,teName,teAddr,teVerNo,swName,swAddr,swVerNo,carName,carAddr,carVerNo,otName,otAddr,otVerNo,otSerType;
-    private String tenant_current_gender="";
-    private String currentPhotoDownloadableUrl="";
+    private String teVerStatus, drVerStatus, wVerStatus, serVerStatus, swVerStatus, carVerStatus, otVerStatus;
+    private EditText drName, drAddr, drVerNo, wName, wAddr, wVerNo, serName, serAddr, serVerNo, teName, teAddr, teVerNo, swName, swAddr, swVerNo, carName, carAddr, carVerNo, otName, otAddr, otVerNo, otSerType;
+    private String tenant_current_gender = "";
+    private static final int REQUEST_LOCATION = 1;
+    private String currentPhotoDownloadableUrl = "";
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private double latitude;
     private double longitude;
+    private LocationManager locationManager;
     private Uri currentPhotoUri;
     private FirebaseStorage storage;
     private StorageReference storageReference;
@@ -120,7 +123,7 @@ public class VerifyActivity extends AppCompatActivity {
         tablayout.addTab(tablayout.newTab().setText("Service Providers"));
         tablayout.addTab(tablayout.newTab().setText("Security Checks"));
         tablayout.setTabGravity(TabLayout.GRAVITY_FILL);
-        final MyAdapter adapter = new MyAdapter(this,getSupportFragmentManager(),
+        final MyAdapter adapter = new MyAdapter(this, getSupportFragmentManager(),
                 tablayout.getTabCount());
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tablayout));
@@ -131,32 +134,47 @@ public class VerifyActivity extends AppCompatActivity {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(tablayout.getApplicationWindowToken(), 0);
             }
+
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
             }
+
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
             }
         });
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION
             }, LOCATION_REQ_CODE);
         } else {
-            getCurrentLocation();
-            //getLocation();
+            //locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
         }
+/**
+ fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+ if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+ && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+ ActivityCompat.requestPermissions(this, new String[]{
+ Manifest.permission.ACCESS_FINE_LOCATION,
+ Manifest.permission.ACCESS_COARSE_LOCATION
+ }, LOCATION_REQ_CODE);
+ } else {
+ getCurrentLocation();
+ //getLocation();
+ }
+ **/
         Calendar cldr = Calendar.getInstance();
         int day = cldr.get(Calendar.DAY_OF_MONTH);
         int month = cldr.get(Calendar.MONTH);
         int year = cldr.get(Calendar.YEAR);
-        currentDate = day + "/" + (month+1) + "/" + year;
+        currentDate = day + "/" + (month + 1) + "/" + year;
         //Checking if gps is enabled
 
     }
+
 
     private void initialiseSpinners() {
         dr = findViewById(R.id.driverVerStatus);
@@ -171,14 +189,14 @@ public class VerifyActivity extends AppCompatActivity {
     private void initialiseEditTexts() {
 
 
-        drName=findViewById(R.id.driverName);
-        drAddr=findViewById(R.id.driverAdd);
+        drName = findViewById(R.id.driverName);
+        drAddr = findViewById(R.id.driverAdd);
         drVerNo = findViewById(R.id.driverVerNo);
         wName = findViewById(R.id.WatchmanName);
         wAddr = findViewById(R.id.WatchmanAdd);
         wVerNo = findViewById(R.id.WatchmanVerNo);
         serName = findViewById(R.id.ServantName);
-        serAddr=findViewById(R.id.ServantAdd);
+        serAddr = findViewById(R.id.ServantAdd);
         serVerNo = findViewById(R.id.ServantVerNo);
         teName = findViewById(R.id.TenantName);
         teAddr = findViewById(R.id.TenantAdd);
@@ -195,48 +213,34 @@ public class VerifyActivity extends AppCompatActivity {
         otVerNo = findViewById(R.id.OthersVerNo);
 
     }
-    public void onClickBackVerify(View view){
-        Intent intent = new Intent(VerifyActivity.this,DashActivity.class);
+
+    public void onClickBackVerify(View view) {
+        Intent intent = new Intent(VerifyActivity.this, DashActivity.class);
         startActivity(intent);
         finish();
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode){
+        switch (requestCode) {
             case LOCATION_REQ_CODE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    //getLocation();
-                    getCurrentLocation();
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getApplicationContext(), "INSIDE", Toast.LENGTH_SHORT).show();
+                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return;
+                    }
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
                 }
                 break;
         }
-    }
-
-
-    private void getCurrentLocation() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            latitude = location.getLatitude();
-                            longitude = location.getLongitude();
-                            // Logic to handle location object
-                        }
-                    }
-                });
     }
     private void initialiseSwitchCompats() {
         Aaa = findViewById(R.id.Aaa);
@@ -286,7 +290,6 @@ public class VerifyActivity extends AppCompatActivity {
         ImageView imageView = findViewById(R.id.seniorPhoto);
         imageView.setImageURI(currentPhotoUri);
     }
-
     private void setDownloadableUrl(Uri uri) {
         final StorageReference reference;
         final ProgressDialog progressDialog = new ProgressDialog(this);
@@ -302,7 +305,6 @@ public class VerifyActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(Uri uri) {
                                 currentPhotoDownloadableUrl = uri.toString();
-
                             }
                         });
                     }
@@ -374,8 +376,8 @@ public class VerifyActivity extends AppCompatActivity {
     }
     public String getChecked(SwitchCompat switchCompat){
       if (switchCompat.isChecked())
-          return switchCompat.getTextOn().toString();
-      else return switchCompat.getTextOff().toString();
+          return String.valueOf(switchCompat.getTextOn());
+      else return String.valueOf(switchCompat.getTextOff());
     }
     public void onClickSaveServiceProviders(View view){
         initialiseEditTexts();
@@ -418,6 +420,18 @@ public class VerifyActivity extends AppCompatActivity {
         serviceProviders = new ServiceProviders(dr,wa,ser,te,sw,car,oth);
         viewPager.setCurrentItem(tablayout.getSelectedTabPosition()+1);
     }
+    public int encodeSec(String s){
+        if(s.equals("Yes")){
+            return 1;
+        }
+        if(s.equals("No")){
+            return 0;
+        }
+        if(s.equals("Poor")){
+            return 2;
+        }
+        return 3;
+    }
     public void onClickSubmit(View view){
         /**
         Button service = findViewById(R.id.serviceProviderSubmit);
@@ -427,16 +441,17 @@ public class VerifyActivity extends AppCompatActivity {
          **/
         initialiseSwitchCompats();
         try {
-            securityChecks = new SecurityChecks(getChecked(Aaa),getChecked(Aab),getChecked(Aac),getChecked(Aad),getChecked(Aae),getChecked(Aaf)
-                    ,getChecked(Aag),getChecked(Aba),getChecked(Abb),getChecked(Abc),getChecked(Abd),getChecked(Abe),getChecked(Abf),getChecked(Abg)
-                    ,getChecked(Ba),getChecked(Bb),getChecked(Bc),getChecked(Bd),getChecked(Be),getChecked(Bf));
+            securityChecks = new SecurityChecks(encodeSec(getChecked(Aaa)),encodeSec(getChecked(Aab)),encodeSec(getChecked(Aac)),encodeSec(getChecked(Aad)),
+                    encodeSec(getChecked(Aae)),encodeSec(getChecked(Aaf)),encodeSec(getChecked(Aag)),encodeSec(getChecked(Aba)),encodeSec(getChecked(Abb)),
+                    encodeSec(getChecked(Abc)),encodeSec(getChecked(Abd)),encodeSec(getChecked(Abe)),encodeSec(getChecked(Abf)),encodeSec(getChecked(Abg)),
+                    encodeSec(getChecked(Ba)),encodeSec(getChecked(Bb)),encodeSec(getChecked(Bc)),encodeSec(getChecked(Bd)),encodeSec(getChecked(Be)),
+                    encodeSec(getChecked(Bf)));
             currentTime = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
             location = new Loc(String.valueOf(latitude),String.valueOf(longitude));
-            moreDetails = new MoreDetails(location, CurrentUser.currentUser.getMob(),currentDate,currentTime);
+            moreDetails = new MoreDetails(location, CurrentUser.currentUser.getMob(),CurrentUser.currentUser.getName(),currentDate,currentTime);
             VerifySnr verifySnr = new VerifySnr(basicDetails,serviceProviders,securityChecks,moreDetails);
             String id = basicDetails.getPersonalDetails().getMob();
-
-                databaseReference.child(Objects.requireNonNull(getIntent().getStringExtra("police"))).child(id).setValue(verifySnr).addOnSuccessListener(new OnSuccessListener<Void>() {
+            databaseReference.child(Objects.requireNonNull(getIntent().getStringExtra("police"))).child(id).setValue(verifySnr).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Toast.makeText(getApplicationContext(), "SUBMIT SUCCESSFUL", Toast.LENGTH_LONG).show();
@@ -1055,4 +1070,24 @@ public class VerifyActivity extends AppCompatActivity {
         linearLayout.setVisibility(View.GONE);
     }
 
+    @Override
+    public void onLocationChanged(Location location) {
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
 }

@@ -12,8 +12,10 @@ import android.widget.Toast;
 
 import com.e.dpkartavya.Common.CurrentUser;
 import com.e.dpkartavya.Model.User;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -39,18 +41,18 @@ public class ChangePasswordActivity extends AppCompatActivity {
         if(validate()){
             User user = new User(CurrentUser.currentUser.getName(),CurrentUser.currentUser.getRank(),CurrentUser.currentUser.getPhoto(),
                     CurrentUser.currentUser.getMob(),newP.getText().toString(),CurrentUser.currentUser.getPolice());
-            databaseReference.child(CurrentUser.currentUser.getMob()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+            databaseReference.child(CurrentUser.currentUser.getMob()).setValue(user).addOnFailureListener(new OnFailureListener() {
                 @Override
-                public void onSuccess(Void aVoid) {
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getApplicationContext(),"BAD DATABASE REQUEST. TRY AGAIN",Toast.LENGTH_LONG).show();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
                     Toast.makeText(getApplicationContext(),"PASSWORD CHANGED!",Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(ChangePasswordActivity.this,DashActivity.class);
                     startActivity(intent);
                     finish();
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(getApplicationContext(),"BAD DATABASE REQUEST. TRY AGAIN",Toast.LENGTH_LONG).show();
                 }
             });
 

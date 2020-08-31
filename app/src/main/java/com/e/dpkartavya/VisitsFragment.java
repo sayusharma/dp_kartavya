@@ -23,6 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -97,7 +98,7 @@ public class VisitsFragment extends Fragment implements VisitAdapter.OnItemClick
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot dataSnapshot1: dataSnapshot.getChildren()){
-                    if(dataSnapshot1.child("police_officer").getValue().equals(CurrentUser.currentUser.getMob())){
+                    if(dataSnapshot1.child("off_mob").getValue().equals(CurrentUser.currentUser.getMob())){
                         Visit order = dataSnapshot1.getValue(Visit.class);
                        // Toast.makeText(getContext(),order.getName(),Toast.LENGTH_SHORT).show();
                         currentList.add(order);
@@ -110,7 +111,7 @@ public class VisitsFragment extends Fragment implements VisitAdapter.OnItemClick
                    // Toast.makeText(getContext(),"NO SENIOR CITIZENS FOUND",Toast.LENGTH_SHORT).show();
                 }
                 else {
-
+                    Collections.reverse(currentList);
                     setAdapter();
                     //Toast.makeText(getContext(),"IN2",Toast.LENGTH_SHORT).show();
                     progressDialog.dismiss();
@@ -121,43 +122,6 @@ public class VisitsFragment extends Fragment implements VisitAdapter.OnItemClick
             }
         });
 
-        /**
-        final ProgressDialog p = new ProgressDialog(getContext());
-        p.setMessage("Loading....");
-        p.show();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                p.dismiss();
-            }
-        },3500);
-        recyclerView = view.findViewById(R.id.visitRecycler);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setHasFixedSize(true);
-        FirebaseRecyclerAdapter<Visit, VisitHolder> adapter = new FirebaseRecyclerAdapter<Visit, VisitHolder>(
-                Visit.class,R.layout.item_visit,VisitHolder.class,databaseReference.orderByChild("police_officer").equalTo(CurrentUser.currentUser.getMob())
-        ) {
-            @Override
-            protected void populateViewHolder(VisitHolder verirySnrViewHolder, Visit verifySnr, int i) {
-                verirySnrViewHolder.name.setText(verifySnr.getName());
-                verirySnrViewHolder.mob.setText(verifySnr.getMob());
-                verirySnrViewHolder.addr.setText(verifySnr.getAddr());
-                verirySnrViewHolder.time.setText(verifySnr.getTime());
-                verirySnrViewHolder.date.setText(verifySnr.getDate());
-                verirySnrViewHolder.notes.setText(verifySnr.getNotes());
-                Picasso.get()
-                        .load(verifySnr.getPhoto())
-                        .into(verirySnrViewHolder.img);
-                verirySnrViewHolder.setItemClickListener(new ItemClickListener() {
-                    @Override
-                    public void onClick(View view, int position, boolean isLongClick) {
-                        Toast.makeText(getContext(),"CAN'T ACCESS",Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        };
-        recyclerView.setAdapter(adapter);
-         **/
         return view;
     }
     private void setAdapter() {

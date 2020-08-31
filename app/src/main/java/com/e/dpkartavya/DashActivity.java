@@ -118,7 +118,7 @@ public class DashActivity extends AppCompatActivity implements AdapterView.OnIte
             e.printStackTrace() ;
         }
         if (!getLocation().equals("Select  Police Station")){
-           // locationEnabled();
+            locationEnabled();
             if (gps_enabled){
                 Intent intent = new Intent(DashActivity.this, VerifyActivity.class);
                 intent.putExtra("police",getLocation());

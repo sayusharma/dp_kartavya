@@ -23,6 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -96,7 +97,7 @@ public class VerificationsFragment extends Fragment implements VerificationAdapt
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot dataSnapshot1: dataSnapshot.getChildren()){
-                    if(dataSnapshot1.child("moreDetails/officer").getValue().equals(CurrentUser.currentUser.getMob())){
+                    if(dataSnapshot1.child("moreDetails/off_mob").getValue().equals(CurrentUser.currentUser.getMob())){
                         VerifySnr order = dataSnapshot1.getValue(VerifySnr.class);
                         // Toast.makeText(getContext(),order.getName(),Toast.LENGTH_SHORT).show();
                         arrayList.add(order);
@@ -109,7 +110,7 @@ public class VerificationsFragment extends Fragment implements VerificationAdapt
                     // Toast.makeText(getContext(),"NO SENIOR CITIZENS FOUND",Toast.LENGTH_SHORT).show();
                 }
                 else {
-
+                    Collections.reverse(arrayList);
                     setAdapter();
                     //Toast.makeText(getContext(),"IN2",Toast.LENGTH_SHORT).show();
                     progressDialog.dismiss();
@@ -119,30 +120,6 @@ public class VerificationsFragment extends Fragment implements VerificationAdapt
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
-        /**
-        FirebaseRecyclerAdapter<VerifySnr, VerificationHolder> adapter = new FirebaseRecyclerAdapter<VerifySnr, VerificationHolder>(
-                VerifySnr.class,R.layout.item_verification,VerificationHolder.class,databaseReference.orderByChild("moreDetails/officer").equalTo(CurrentUser.currentUser.getMob())
-        ) {
-            @Override
-            protected void populateViewHolder(VerificationHolder verirySnrViewHolder, VerifySnr verifySnr, int i) {
-                verirySnrViewHolder.name.setText(verifySnr.getBasicDetails().getPersonalDetails().getName());
-                verirySnrViewHolder.mob.setText(verifySnr.getBasicDetails().getPersonalDetails().getMob());
-                verirySnrViewHolder.addr.setText(verifySnr.getBasicDetails().getPersonalDetails().getAddress());
-                verirySnrViewHolder.time.setText(verifySnr.getMoreDetails().getTime());
-                verirySnrViewHolder.date.setText(verifySnr.getMoreDetails().getDate());
-                Picasso.get()
-                        .load(verifySnr.getBasicDetails().getPersonalDetails().getPhoto())
-                        .into(verirySnrViewHolder.img);
-                verirySnrViewHolder.setItemClickListener(new ItemClickListener() {
-                    @Override
-                    public void onClick(View view, int position, boolean isLongClick) {
-                        Toast.makeText(getContext(),"CAN'T ACCESS",Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        };
-        recyclerView.setAdapter(adapter);
-         **/
         return view;
     }
     private void setAdapter() {

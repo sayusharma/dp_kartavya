@@ -87,7 +87,7 @@ public class VisitActivity extends AppCompatActivity {
             int year = cldr.get(Calendar.YEAR);
             String currentDate = day + "/" + (month+1) + "/" + year;
             String currentTime = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
-            Visit visit = new Visit(name.getText().toString(),CurrentVisit.currentVisit.getBasicDetails().getPersonalDetails().getMob(),CurrentVisit.currentVisit.getBasicDetails().getPersonalDetails().getAddress(),currentPhotoDownloadableUrl, CurrentUser.currentUser.getMob(),currentDate,currentTime,notes.getText().toString());
+            Visit visit = new Visit(name.getText().toString(),CurrentVisit.currentVisit.getBasicDetails().getPersonalDetails().getMob(),CurrentVisit.currentVisit.getBasicDetails().getPersonalDetails().getAddress(),currentPhotoDownloadableUrl, CurrentUser.currentUser.getMob(),CurrentUser.currentUser.getName(),currentDate,currentTime,notes.getText().toString());
             databaseReference.child(String.valueOf(System.currentTimeMillis())).setValue(visit).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {

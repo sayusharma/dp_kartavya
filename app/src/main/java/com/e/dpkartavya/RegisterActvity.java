@@ -67,7 +67,7 @@ public class RegisterActvity extends AppCompatActivity {
 
             User user = new User(name.getText().toString(),rank.getText().toString(),currentPhotoDownloadableUrl,mob.getText().toString(),
                     pass.getText().toString(),policeStation.getText().toString());
-            databaseReference.child(String.valueOf(System.currentTimeMillis())).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+            databaseReference.child(mob.getText().toString()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
                     Toast.makeText(getApplicationContext(),"PLEASE WAIT UNTIL YOUR SIGN UP REQUEST IS REVIEWED!",Toast.LENGTH_LONG).show();

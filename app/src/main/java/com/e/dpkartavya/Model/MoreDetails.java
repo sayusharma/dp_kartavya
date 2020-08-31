@@ -2,7 +2,7 @@ package com.e.dpkartavya.Model;
 
 public class MoreDetails {
     private Loc loc;
-    private String officer,date,time;
+    private String off_mob,off_name,date,time;
     public MoreDetails(){}
 
     public Loc getLoc() {
@@ -13,12 +13,20 @@ public class MoreDetails {
         this.loc = loc;
     }
 
-    public String getOfficer() {
-        return officer;
+    public String getOff_mob() {
+        return off_mob;
     }
 
-    public void setOfficer(String officer) {
-        this.officer = officer;
+    public void setOff_mob(String off_mob) {
+        this.off_mob = off_mob;
+    }
+
+    public String getOff_name() {
+        return off_name;
+    }
+
+    public void setOff_name(String off_name) {
+        this.off_name = off_name;
     }
 
     public String getDate() {
@@ -37,9 +45,10 @@ public class MoreDetails {
         this.time = time;
     }
 
-    public MoreDetails(Loc loc, String officer, String date, String time) {
+    public MoreDetails(Loc loc, String off_mob, String off_name, String date, String time) {
         this.loc = loc;
-        this.officer = officer;
+        this.off_mob = off_mob;
+        this.off_name = off_name;
         this.date = date;
         this.time = time;
     }
