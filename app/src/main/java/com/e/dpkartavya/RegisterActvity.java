@@ -9,9 +9,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.e.dpkartavya.Model.User;
@@ -36,7 +37,8 @@ public class RegisterActvity extends AppCompatActivity {
     private Uri currentPhotoUri;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
-    private EditText name,mob,conMob,rank,policeStation,pass,conPass;
+    private Spinner policeStation;
+    private EditText name,mob,conMob,rank,pass,conPass;
     private String currentPhotoDownloadableUrl="";
 
     @Override
@@ -45,16 +47,18 @@ public class RegisterActvity extends AppCompatActivity {
         setContentView(R.layout.activity_register_actvity);
         imageView = findViewById(R.id.userPhoto);
         firebaseStorage = FirebaseStorage.getInstance();
-        storageReference = firebaseStorage.getReference("userImages");
+        storageReference = firebaseStorage.getReference();
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("requests");
         name = findViewById(R.id.userName);
         mob = findViewById(R.id.userMob);
         conMob = findViewById(R.id.userMobConfirm);
         rank = findViewById(R.id.userRank);
-        policeStation = findViewById(R.id.userPoliceStation);
-        pass = findViewById(R.id.userPass);
-        conPass = findViewById(R.id.userConPass);
+        policeStation = findViewById(R.id.policeStation);
+        ArrayAdapter<CharSequence> adapters = ArrayAdapter.createFromResource(this,
+                R.array.police_station, R.layout.spinner_item_text);
+        adapters.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        policeStation.setAdapter(adapters);
     }
     public void onClickUploadProfilePhoto(View view){
         CropImage.activity()
@@ -65,9 +69,9 @@ public class RegisterActvity extends AppCompatActivity {
     public void onClickRegisterNowDetails(View view){
         if(validate()){
 
-            User user = new User(name.getText().toString(),rank.getText().toString(),currentPhotoDownloadableUrl,mob.getText().toString(),
-                    pass.getText().toString(),policeStation.getText().toString());
-            databaseReference.child(mob.getText().toString()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+            User user = new User(name.getText().toString(),rank.getText().toString(),currentPhotoDownloadableUrl,"+91"+mob.getText().toString()
+                    ,policeStation.getSelectedItem().toString());
+            databaseReference.child("+91"+mob.getText().toString()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
                     Toast.makeText(getApplicationContext(),"PLEASE WAIT UNTIL YOUR SIGN UP REQUEST IS REVIEWED!",Toast.LENGTH_LONG).show();
@@ -87,9 +91,12 @@ public class RegisterActvity extends AppCompatActivity {
 
     private boolean validate() {
         if (TextUtils.isEmpty(name.getText()) || TextUtils.isEmpty(mob.getText()) || TextUtils.isEmpty(conMob.getText()) ||
-                TextUtils.isEmpty(rank.getText()) || TextUtils.isEmpty(policeStation.getText()) || TextUtils.isEmpty(pass.getText())
-                || TextUtils.isEmpty(conPass.getText())){
-            Toast.makeText(getApplicationContext(),"FILEDS CANNOT BE EMPTY!",Toast.LENGTH_SHORT).show();
+                TextUtils.isEmpty(rank.getText())){
+            Toast.makeText(getApplicationContext(),"FIELDS CANNOT BE EMPTY!",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else if(policeStation.getSelectedItemPosition()==0){
+            Toast.makeText(getApplicationContext(),"SELECT POLICE STATION",Toast.LENGTH_SHORT).show();
             return false;
         }
         else if(currentPhotoDownloadableUrl.equals("")){
@@ -98,10 +105,6 @@ public class RegisterActvity extends AppCompatActivity {
         }
         else if(!mob.getText().toString().equals(conMob.getText().toString())){
             Toast.makeText(getApplicationContext(),"MOBILE NUMBER DOES NOT MATCH!",Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        else if(!pass.getText().toString().equals(conPass.getText().toString())){
-            Toast.makeText(getApplicationContext(),"PASSWORD DOES NOT MATCH!",Toast.LENGTH_SHORT).show();
             return false;
         }
         else {

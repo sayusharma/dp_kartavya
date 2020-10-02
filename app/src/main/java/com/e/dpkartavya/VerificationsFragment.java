@@ -1,6 +1,7 @@
 package com.e.dpkartavya;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.e.dpkartavya.Adapter.VerificationAdapter;
+import com.e.dpkartavya.Common.CurrentSenior;
 import com.e.dpkartavya.Common.CurrentUser;
 import com.e.dpkartavya.Model.VerifySnr;
 import com.google.firebase.database.DataSnapshot;
@@ -83,7 +85,7 @@ public class VerificationsFragment extends Fragment implements VerificationAdapt
         View view = inflater.inflate(R.layout.fragment_verifications, container, false);
        // Toast.makeText(getContext(),"YOU THERE",Toast.LENGTH_LONG).show();
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference("snr_czn").child(MyVerificationActivity.loc);
+        databaseReference = firebaseDatabase.getReference("snr_czn").child(CurrentUser.currentUser.getPolice());
         //Toast.makeText(getContext(), MyVerificationActivity.loc,Toast.LENGTH_LONG).show();
         recyclerView = view.findViewById(R.id.verificationRecycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -92,6 +94,7 @@ public class VerificationsFragment extends Fragment implements VerificationAdapt
         final ProgressDialog progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("Loading...");
         progressDialog.show();
+        progressDialog.setCancelable(false);
         //Query query = databaseReference.orderByKey();
         databaseReference.orderByChild("moreDetails/date").addValueEventListener(new ValueEventListener() {
             @Override
@@ -131,6 +134,8 @@ public class VerificationsFragment extends Fragment implements VerificationAdapt
 
     @Override
     public void onClick(int position) {
-        Toast.makeText(getContext(),"CAN'T ACCESS",Toast.LENGTH_SHORT).show();
+        CurrentSenior.currentSenior = arrayList.get(position);
+        Intent intent = new Intent(getActivity(),PreviewSnrCznActivity.class);
+        startActivity(intent);
     }
 }

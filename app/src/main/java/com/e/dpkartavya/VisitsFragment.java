@@ -15,7 +15,10 @@ import android.widget.Toast;
 
 import com.e.dpkartavya.Adapter.VisitAdapter;
 import com.e.dpkartavya.Common.CurrentUser;
+import com.e.dpkartavya.Interface.ItemClickListener;
 import com.e.dpkartavya.Model.Visit;
+import com.e.dpkartavya.ViewHolder.VisitViewHolder;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -84,51 +87,34 @@ public class VisitsFragment extends Fragment implements VisitAdapter.OnItemClick
         View view = inflater.inflate(R.layout.fragment_visits, container, false);
         // Toast.makeText(getContext(),"YOU THERE",Toast.LENGTH_LONG).show();
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference("visits");
+        databaseReference = firebaseDatabase.getReference("my_visits").child(CurrentUser.currentUser.getMob());
         arrayList = new ArrayList<>();
         currentList = new ArrayList<>();
         recyclerView = view.findViewById(R.id.visitRecycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setHasFixedSize(true);
-        final ProgressDialog progressDialog = new ProgressDialog(getContext());
-        progressDialog.setMessage("Loading...");
-        progressDialog.show();
         //Query query = databaseReference.orderByKey();
-        databaseReference.orderByChild("date").addValueEventListener(new ValueEventListener() {
+
+        FirebaseRecyclerAdapter<Visit, VisitViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Visit, VisitViewHolder>(Visit.class,
+                R.layout.item_visit,VisitViewHolder.class,databaseReference.orderByKey()) {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot dataSnapshot1: dataSnapshot.getChildren()){
-                    if(dataSnapshot1.child("off_mob").getValue().equals(CurrentUser.currentUser.getMob())){
-                        Visit order = dataSnapshot1.getValue(Visit.class);
-                       // Toast.makeText(getContext(),order.getName(),Toast.LENGTH_SHORT).show();
-                        currentList.add(order);
+            protected void populateViewHolder(VisitViewHolder visitViewHolder, Visit visit, int i) {
+                visitViewHolder.complaint.setText(visit.getComplaint());
+                visitViewHolder.date.setText(visit.getDate());
+                visitViewHolder.mob.setText(visit.getMob());
+                visitViewHolder.name.setText(visit.getName());
+                visitViewHolder.notes.setText(visit.getNotes());
+                visitViewHolder.time.setText(visit.getTime());
+                visitViewHolder.setItemClickListener(new ItemClickListener() {
+                    @Override
+                    public void onClick(View view, int position, boolean isLongClick) {
+
                     }
-
-                    //Toast.makeText(getContext(),"36",Toast.LENGTH_SHORT).show();
-                }
-                if (currentList.isEmpty()){
-                    progressDialog.dismiss();
-                   // Toast.makeText(getContext(),"NO SENIOR CITIZENS FOUND",Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    Collections.reverse(currentList);
-                    setAdapter();
-                    //Toast.makeText(getContext(),"IN2",Toast.LENGTH_SHORT).show();
-                    progressDialog.dismiss();
-                }
+                });
             }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
-
+        };
+        recyclerView.setAdapter(firebaseRecyclerAdapter);
         return view;
-    }
-    private void setAdapter() {
-        orderAdapter = new VisitAdapter(getContext(), currentList,this);
-        //Toast.makeText(getContext(),"IN3",Toast.LENGTH_SHORT).show();
-        recyclerView.setAdapter(orderAdapter);
-
     }
 
     @Override

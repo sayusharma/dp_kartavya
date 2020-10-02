@@ -162,6 +162,31 @@
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
+            <TextView
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="36dp"
+                android:layout_width="wrap_content"
+                android:text="Complaint"
+                android:textColor="@color/colorPrimary"
+                android:fontFamily="@font/open_sans_bold"
+                android:layout_height="wrap_content"/>
+            <EditText
+                android:id="@+id/visitComplaint"
+                android:layout_width="match_parent"
+                android:layout_height="43dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="2dp"
+                android:textColorHint="#bdbdbd"
+                android:layout_marginEnd="34dp"
+                android:inputType="textCapSentences"
+                android:backgroundTint="#bdbdbd"
+                android:fontFamily="@font/open_sans_semibold"
+                android:hint="Enter Complaint"
+                android:textColor="#1f2144"
+                android:maxLines="1"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

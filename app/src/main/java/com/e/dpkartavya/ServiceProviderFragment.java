@@ -4,12 +4,24 @@ import android.os.Bundle;
 
 import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
+
+import com.e.dpkartavya.Adapter.ServiceAdapter;
+import com.e.dpkartavya.Common.CurrentServiceProviderList;
+import com.e.dpkartavya.Model.ServiceProvider;
+
+import java.util.ArrayList;
 
 
 /**
@@ -22,7 +34,13 @@ public class ServiceProviderFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
+    private ServiceAdapter serviceAdapter;
+    private ArrayList<ServiceProvider> arrayList;
     private static final String ARG_PARAM2 = "param2";
+    private EditText name,addr,notes;
+    private Spinner verStatus,serType;
+    private RecyclerView recyclerView;
+    private Button addService;
 
     private Spinner driverSpinner,watchmanSpinner,tenantSpinner,servantSpinner,sweeperSpinner,carcleanerSpinner,otherSpinner;
 
@@ -66,23 +84,49 @@ public class ServiceProviderFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_service_provider, container, false);
-        driverSpinner = view.findViewById(R.id.driverVerStatus);
-        watchmanSpinner = view.findViewById(R.id.WatchmanVerStatus);
-        tenantSpinner = view.findViewById(R.id.TenantVerStatus);
-        servantSpinner = view.findViewById(R.id.ServantVerStatus);
-        sweeperSpinner = view.findViewById(R.id.SweeperVerStatus);
-        carcleanerSpinner = view.findViewById(R.id.CarCleanerVerStatus);
-        otherSpinner = view.findViewById(R.id.OthersVerStatus);
+        name = view.findViewById(R.id.serName);
+        addr = view.findViewById(R.id.serAddress);
+        recyclerView = view.findViewById(R.id.serviceProvideRecycler);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        notes = view.findViewById(R.id.verNotes);
+        arrayList = new ArrayList<>();
+        verStatus = view.findViewById(R.id.verStatus);
+        serType = view.findViewById(R.id.serviceType);
+        addService = view.findViewById(R.id.btnAddServiceProvider);
         ArrayAdapter<CharSequence> adapters = ArrayAdapter.createFromResource(getActivity(),
                 R.array.verification, R.layout.spinner_item_text);
         adapters.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        driverSpinner.setAdapter(adapters);
-        watchmanSpinner.setAdapter(adapters);
-        tenantSpinner.setAdapter(adapters);
-        servantSpinner.setAdapter(adapters);
-        sweeperSpinner.setAdapter(adapters);
-        carcleanerSpinner.setAdapter(adapters);
-        otherSpinner.setAdapter(adapters);
+        ArrayAdapter<CharSequence> adapters2 = ArrayAdapter.createFromResource(getActivity(),
+                R.array.service_type, R.layout.spinner_item_text);
+        adapters2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        verStatus.setAdapter(adapters);
+        serType.setAdapter(adapters2);
+        addService.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (TextUtils.isEmpty(name.getText()) || TextUtils.isEmpty(addr.getText()) || TextUtils.isEmpty(notes.getText())){
+                    Toast.makeText(getActivity(),"FIELDS CANNOT BE EMPTY!",Toast.LENGTH_SHORT).show();
+                }
+                else if (verStatus.getSelectedItemPosition() == 0){
+                    Toast.makeText(getActivity(),"SELECT VERIFICATION STATUS",Toast.LENGTH_SHORT).show();
+                }
+                else if (serType.getSelectedItemPosition() == 0){
+                    Toast.makeText(getActivity(),"SELECT SERVICE TYPE",Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    ServiceProvider serviceProvider = new ServiceProvider(serType.getSelectedItem().toString(),name.getText().toString(),addr.getText().toString(),verStatus.getSelectedItem().toString(),notes.getText().toString());
+                    arrayList.add(serviceProvider);
+                    name.setText("");
+                    addr.setText("");
+                    notes.setText("");
+                    verStatus.setSelection(0);
+                    serType.setSelection(0);
+                    serviceAdapter = new ServiceAdapter(getContext(),arrayList);
+                    recyclerView.setAdapter(serviceAdapter);
+                    CurrentServiceProviderList.currentServiceList = arrayList;
+                }
+            }
+        });
         return view;
     }
 }

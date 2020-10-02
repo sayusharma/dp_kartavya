@@ -5,10 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -17,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.e.dpkartavya.Adapter.SeniorAdapter;
+import com.e.dpkartavya.Common.CurrentUser;
 import com.e.dpkartavya.Common.CurrentVisit;
 import com.e.dpkartavya.Model.VerifySnr;
 import com.google.firebase.database.DataSnapshot;
@@ -39,6 +44,8 @@ public class MarkVisitActivity extends AppCompatActivity implements SeniorAdapte
     private ArrayList<VerifySnr> cuurentArrayList;
     private SeniorAdapter orderAdapter;
     private ArrayList<VerifySnr> arrayList;
+    private boolean gps_enabled=false;
+    private boolean network_enabled = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,7 +113,8 @@ public class MarkVisitActivity extends AppCompatActivity implements SeniorAdapte
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading...");
         progressDialog.show();
-        databaseReference = firebaseDatabase.getReference("snr_czn").child(Objects.requireNonNull(getIntent().getStringExtra("police")));
+        progressDialog.setCancelable(false);
+        databaseReference = firebaseDatabase.getReference("snr_czn").child(CurrentUser.currentUser.getPolice());
         //Query query = databaseReference.orderByKey();
         databaseReference.orderByChild("basicDetails/personalDetails/name").addValueEventListener(new ValueEventListener() {
             @Override
@@ -189,11 +197,49 @@ public class MarkVisitActivity extends AppCompatActivity implements SeniorAdapte
         startActivity(intent);
         finish();
     }
+    private void locationEnabled () {
+
+        LocationManager lm = (LocationManager)
+                getSystemService(Context. LOCATION_SERVICE ) ;
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER ) ;
+        } catch (Exception e) {
+            e.printStackTrace() ;
+        }
+        try {
+            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER ) ;
+        } catch (Exception e) {
+            e.printStackTrace() ;
+        }
+        if (!gps_enabled && !network_enabled) {
+            new AlertDialog.Builder(MarkVisitActivity.this )
+                    .setMessage( "Please Enable GPS" )
+                    .setPositiveButton( "Settings", new
+                            DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick (DialogInterface paramDialogInterface , int paramInt) {
+                                    startActivity( new Intent(Settings. ACTION_LOCATION_SOURCE_SETTINGS )) ;
+                                }
+                            })
+                    .show() ;
+
+        }
+    }
     @Override
     public void onClick(int position) {
-        Intent intent = new Intent(MarkVisitActivity.this,VisitActivity.class);
         CurrentVisit.currentVisit = cuurentArrayList.get(position);
-        intent.putExtra("police",getIntent().getStringExtra("police"));
-        startActivity(intent);
+        LocationManager lm = (LocationManager)
+                getSystemService(Context. LOCATION_SERVICE ) ;
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER ) ;
+        } catch (Exception e) {
+            e.printStackTrace() ;
+        }
+        locationEnabled();
+        if (gps_enabled){
+            Intent intent = new Intent(MarkVisitActivity.this,VisitActivity.class);
+            startActivity(intent);
+        }
+        else locationEnabled();
     }
 }

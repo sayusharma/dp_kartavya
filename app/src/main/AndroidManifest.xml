@@ -9,8 +9,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Design.NoActionBar">
-        <activity android:name=".ChangePasswordActivity"></activity>
-        <activity android:name=".EditProfileActivity" />
         <activity android:name=".RegisterActvity" />
         <activity android:name=".MyVerificationActivity" />
         <activity android:name=".VisitActivity" />
@@ -18,6 +16,7 @@
         <activity android:name=".VerifyActivity" />
         <activity android:name=".DashActivity" />
         <activity android:name=".LoginActivity" />
+        <activity android:name=".PreviewSnrCznActivity" />
         <activity android:name=".MyProfile"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar"

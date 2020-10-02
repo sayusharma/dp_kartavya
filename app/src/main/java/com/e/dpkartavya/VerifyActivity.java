@@ -2,9 +2,7 @@ package com.e.dpkartavya;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.appcompat.widget.SwitchCompat;
-import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.viewpager.widget.ViewPager;
@@ -26,47 +24,42 @@ import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.e.dpkartavya.Common.CurrentChildrenList;
+import com.e.dpkartavya.Common.CurrentServiceProviderList;
 import com.e.dpkartavya.Common.CurrentUser;
+import com.e.dpkartavya.Common.CurrentVisit;
 import com.e.dpkartavya.Model.AdditionalDetails;
 import com.e.dpkartavya.Model.BasicDetails;
+import com.e.dpkartavya.Model.LastVisit;
 import com.e.dpkartavya.Model.Loc;
 import com.e.dpkartavya.Model.MoreDetails;
-import com.e.dpkartavya.Model.OtherServiceProvider;
 import com.e.dpkartavya.Model.PersonalDetails;
 import com.e.dpkartavya.Model.RelativeDetails;
 import com.e.dpkartavya.Model.SecurityChecks;
-import com.e.dpkartavya.Model.ServiceProvider;
 import com.e.dpkartavya.Model.SpouseDetails;
 import com.e.dpkartavya.Model.VerifySnr;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.moe.pushlibrary.MoEHelper;
-import com.moengage.core.Properties;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -83,9 +76,10 @@ public class VerifyActivity extends AppCompatActivity implements LocationListene
     private FusedLocationProviderClient fusedLocationClient;
     private RelativeDetails relativeDetails;
     private BasicDetails basicDetails;
+    private boolean gps_enabled = false;
+    private boolean network_enabled = false;
     private MoreDetails moreDetails;
     EditText name, dob, addr, mob, email, sname, sdob, wedding, from, year, field, children, residingWith, health, lpVisit, freeTime, rname, relation, rmob, raddr;
-    private ServiceProviders serviceProviders;
     private SecurityChecks securityChecks;
     private SwitchCompat Aaa, Aab, Aac, Aad, Aae, Aaf, Aag, Aba, Abb, Abc, Abd, Abe, Abf, Abg, Ba, Bb, Bc, Bd, Be, Bf;
     private String retired = "";
@@ -117,6 +111,8 @@ public class VerifyActivity extends AppCompatActivity implements LocationListene
         storageReference = storage.getReference();
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("snr_czn");
+        CurrentServiceProviderList.currentServiceList = new ArrayList<>();
+        CurrentChildrenList.currentChildrenList = new ArrayList<>();
         tablayout = findViewById(R.id.tabLayout);
         viewPager = findViewById(R.id.viewPager);
         tablayout.addTab(tablayout.newTab().setText("Basic Details"));
@@ -170,49 +166,11 @@ public class VerifyActivity extends AppCompatActivity implements LocationListene
         int day = cldr.get(Calendar.DAY_OF_MONTH);
         int month = cldr.get(Calendar.MONTH);
         int year = cldr.get(Calendar.YEAR);
-        currentDate = day + "/" + (month + 1) + "/" + year;
+        currentDate = year + "/" + (month + 1) + "/" + day;
         //Checking if gps is enabled
 
     }
 
-
-    private void initialiseSpinners() {
-        dr = findViewById(R.id.driverVerStatus);
-        wa = findViewById(R.id.WatchmanVerStatus);
-        ser = findViewById(R.id.ServantVerStatus);
-        ten = findViewById(R.id.TenantVerStatus);
-        swe = findViewById(R.id.SweeperVerStatus);
-        car = findViewById(R.id.CarCleanerVerStatus);
-        oth = findViewById(R.id.OthersVerStatus);
-    }
-
-    private void initialiseEditTexts() {
-
-
-        drName = findViewById(R.id.driverName);
-        drAddr = findViewById(R.id.driverAdd);
-        drVerNo = findViewById(R.id.driverVerNo);
-        wName = findViewById(R.id.WatchmanName);
-        wAddr = findViewById(R.id.WatchmanAdd);
-        wVerNo = findViewById(R.id.WatchmanVerNo);
-        serName = findViewById(R.id.ServantName);
-        serAddr = findViewById(R.id.ServantAdd);
-        serVerNo = findViewById(R.id.ServantVerNo);
-        teName = findViewById(R.id.TenantName);
-        teAddr = findViewById(R.id.TenantAdd);
-        teVerNo = findViewById(R.id.TenantVerNo);
-        swName = findViewById(R.id.SweeperName);
-        swAddr = findViewById(R.id.SweeperAdd);
-        swVerNo = findViewById(R.id.SweeperVerNo);
-        carName = findViewById(R.id.CarCleanerName);
-        carAddr = findViewById(R.id.CarCleanerAdd);
-        carVerNo = findViewById(R.id.CarCleanerVerNo);
-        otName = findViewById(R.id.OthersName);
-        otAddr = findViewById(R.id.OthersAdd);
-        otSerType = findViewById(R.id.OthersSerType);
-        otVerNo = findViewById(R.id.OthersVerNo);
-
-    }
 
     public void onClickBackVerify(View view) {
         Intent intent = new Intent(VerifyActivity.this, DashActivity.class);
@@ -226,7 +184,6 @@ public class VerifyActivity extends AppCompatActivity implements LocationListene
         switch (requestCode) {
             case LOCATION_REQ_CODE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(getApplicationContext(), "INSIDE", Toast.LENGTH_SHORT).show();
                     if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                         // TODO: Consider calling
                         //    ActivityCompat#requestPermissions
@@ -242,6 +199,7 @@ public class VerifyActivity extends AppCompatActivity implements LocationListene
                 break;
         }
     }
+
     private void initialiseSwitchCompats() {
         Aaa = findViewById(R.id.Aaa);
         Aab = findViewById(R.id.Aab);
@@ -265,12 +223,13 @@ public class VerifyActivity extends AppCompatActivity implements LocationListene
         Bf = findViewById(R.id.Bf);
     }
 
-    public void onClickAddPhoto(View view){
+    public void onClickAddPhoto(View view) {
         CropImage.activity()
                 .setGuidelines(CropImageView.Guidelines.ON)
-                .setAspectRatio(1,1)
+                .setAspectRatio(1, 1)
                 .start(this);
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -290,12 +249,13 @@ public class VerifyActivity extends AppCompatActivity implements LocationListene
         ImageView imageView = findViewById(R.id.seniorPhoto);
         imageView.setImageURI(currentPhotoUri);
     }
+
     private void setDownloadableUrl(Uri uri) {
         final StorageReference reference;
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Uploading Photo....");
         progressDialog.show();
-        reference = storageReference.child("SnrCznImages/"+ UUID.randomUUID().toString());
+        reference = storageReference.child("SnrCznImages/" + UUID.randomUUID().toString());
         reference.putFile(uri)
                 .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
@@ -313,14 +273,14 @@ public class VerifyActivity extends AppCompatActivity implements LocationListene
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         progressDialog.dismiss();
-                        Toast.makeText(getApplicationContext(),"ERROR UPLOADING PHOTO",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "ERROR UPLOADING PHOTO", Toast.LENGTH_LONG).show();
                     }
                 });
     }
 
-    public void onClickSaveBasicDetails(View view){
+    public void onClickSaveBasicDetails(View view) {
         name = findViewById(R.id.seniorName);
-        dob= findViewById(R.id.dob_senior);
+        dob = findViewById(R.id.dob_senior);
         addr = findViewById(R.id.seniorAddress);
         mob = findViewById(R.id.seniorMob);
         email = findViewById(R.id.seniorEmail);
@@ -330,131 +290,134 @@ public class VerifyActivity extends AppCompatActivity implements LocationListene
         from = findViewById(R.id.retiredFrom);
         year = findViewById(R.id.retiredYear);
         field = findViewById(R.id.field);
-        children = findViewById(R.id.childrenDetails);
         residingWith = findViewById(R.id.residingWith);
         health = findViewById(R.id.health);
-        lpVisit = findViewById(R.id.lpVisit);
         freeTime = findViewById(R.id.freeTime);
         rname = findViewById(R.id.relativeName);
         relation = findViewById(R.id.relativeRelation);
         rmob = findViewById(R.id.relativeMob);
         raddr = findViewById(R.id.relativeAdd);
-        if (validateBasicDetails())
-        {
-            personalDetails = new PersonalDetails(currentPhotoDownloadableUrl,name.getText().toString(),tenant_current_gender,dob.getText().toString(),addr.getText().toString(),mob.getText().toString(),email.getText().toString());
-            spouseDetails = new SpouseDetails(sname.getText().toString(),sdob.getText().toString(),wedding.getText().toString());
-            additionalDetails = new AdditionalDetails(retired,from.getText().toString(),year.getText().toString(),field.getText().toString(),children.getText().toString(),residingWith.getText().toString(),health.getText().toString(),lpVisit.getText().toString(),freeTime.getText().toString());
-            relativeDetails = new RelativeDetails(rname.getText().toString(),relation.getText().toString(),rmob.getText().toString(),raddr.getText().toString());
-            basicDetails = new BasicDetails(personalDetails,spouseDetails,additionalDetails,relativeDetails);
-            viewPager.setCurrentItem(tablayout.getSelectedTabPosition()+1);
+        if (validateBasicDetails()) {
+            personalDetails = new PersonalDetails(currentPhotoDownloadableUrl, name.getText().toString(), tenant_current_gender, dob.getText().toString(), addr.getText().toString(), mob.getText().toString(), email.getText().toString());
+            spouseDetails = new SpouseDetails(sname.getText().toString(), sdob.getText().toString(), wedding.getText().toString());
+            additionalDetails = new AdditionalDetails(retired, from.getText().toString(), year.getText().toString(), field.getText().toString(), residingWith.getText().toString(), health.getText().toString(), freeTime.getText().toString());
+            relativeDetails = new RelativeDetails(rname.getText().toString(), relation.getText().toString(), rmob.getText().toString(), raddr.getText().toString());
+            basicDetails = new BasicDetails(personalDetails, spouseDetails, additionalDetails, relativeDetails, CurrentChildrenList.currentChildrenList);
+            viewPager.setCurrentItem(tablayout.getSelectedTabPosition() + 1);
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(tablayout.getApplicationWindowToken(), 0);
         }
     }
 
     private boolean validateBasicDetails() {
-            if (TextUtils.isEmpty(name.getText()) || TextUtils.isEmpty(dob.getText()) || TextUtils.isEmpty(addr.getText()) || TextUtils.isEmpty(mob.getText()) ||
-                TextUtils.isEmpty(email.getText()) || TextUtils.isEmpty(sname.getText()) || TextUtils.isEmpty(sdob.getText()) ||
-                TextUtils.isEmpty(wedding.getText()) || TextUtils.isEmpty(field.getText()) || TextUtils.isEmpty(children.getText()) ||
-                    TextUtils.isEmpty(residingWith.getText()) || TextUtils.isEmpty(health.getText()) || TextUtils.isEmpty(lpVisit.getText()) ||
-                    TextUtils.isEmpty(freeTime.getText()) || TextUtils.isEmpty(rname.getText()) || TextUtils.isEmpty(relation.getText()) ||
-                    TextUtils.isEmpty(rmob.getText()) || TextUtils.isEmpty(raddr.getText()))
-            {
-                Toast.makeText(getApplicationContext(),"FIELDS CANNOT BE EMPTY",Toast.LENGTH_LONG).show();
-                return false;
-            }
-            else if (mob.getText().length()!=10 || rmob.getText().length()!=10){
-                Toast.makeText(getApplicationContext(),"MOB NO CANNOT BE LESS THAN 10 DIGITS",Toast.LENGTH_LONG).show();
-                return false;
-            }
-            else if (currentPhotoDownloadableUrl.equals("")){
-                Toast.makeText(getApplicationContext(),"PLEASE UPLOAD PHOTO",Toast.LENGTH_LONG).show();
-                return false;
-            }else if (tenant_current_gender.equals("")){
-                Toast.makeText(getApplicationContext(),"PLEASE SELECT GENDER",Toast.LENGTH_LONG).show();
-                return false;
-            }
-            else return true;
+        if (TextUtils.isEmpty(name.getText()) || TextUtils.isEmpty(dob.getText()) || TextUtils.isEmpty(addr.getText()) || TextUtils.isEmpty(mob.getText())) {
+            Toast.makeText(getApplicationContext(), "FIELDS CANNOT BE EMPTY", Toast.LENGTH_LONG).show();
+            return false;
+        } else if (mob.getText().length() != 10) {
+            Toast.makeText(getApplicationContext(), "MOB NO CANNOT BE LESS THAN 10 DIGITS", Toast.LENGTH_LONG).show();
+            return false;
+        } else if (tenant_current_gender.equals("")) {
+            Toast.makeText(getApplicationContext(), "PLEASE SELECT GENDER", Toast.LENGTH_LONG).show();
+            return false;
+        } else return true;
     }
-    public String getChecked(SwitchCompat switchCompat){
-      if (switchCompat.isChecked())
-          return String.valueOf(switchCompat.getTextOn());
-      else return String.valueOf(switchCompat.getTextOff());
+
+    public String getChecked(SwitchCompat switchCompat) {
+        if (switchCompat.isChecked())
+            return String.valueOf(switchCompat.getTextOn());
+        else return String.valueOf(switchCompat.getTextOff());
     }
-    public void onClickSaveServiceProviders(View view){
-        initialiseEditTexts();
-        initialiseSpinners();
-        if (dr.getSelectedItem().toString().equals("Select Verification Status")){
-            drVerStatus = "";
-        }
-        else drVerStatus = dr.getSelectedItem().toString();
-        if (wa.getSelectedItem().toString().equals("Select Verification Status")){
-            wVerStatus = "";
-        }
-        else wVerStatus = wa.getSelectedItem().toString();
-        if (ser.getSelectedItem().toString().equals("Select Verification Status")){
-            serVerStatus = "";
-        }
-        else serVerStatus = ser.getSelectedItem().toString();
-        if (ten.getSelectedItem().toString().equals("Select Verification Status")){
-            teVerStatus = "";
-        }
-        else teVerStatus = ten.getSelectedItem().toString();
-        if (swe.getSelectedItem().toString().equals("Select Verification Status")){
-            swVerStatus = "";
-        }
-        else swVerStatus = swe.getSelectedItem().toString();
-        if (car.getSelectedItem().toString().equals("Select Verification Status")){
-            carVerStatus = "";
-        }
-        else carVerStatus = car.getSelectedItem().toString();
-        if (oth.getSelectedItem().toString().equals("Select Verification Status")){
-            otVerStatus = "";
-        }
-        else otVerStatus = oth.getSelectedItem().toString();
-        ServiceProvider dr = new ServiceProvider(drName.getText().toString(),drAddr.getText().toString(),drVerStatus,drVerNo.getText().toString());
-        ServiceProvider wa = new ServiceProvider(wName.getText().toString(),wAddr.getText().toString(),wVerStatus,wVerNo.getText().toString());
-        ServiceProvider ser = new ServiceProvider(serName.getText().toString(),serAddr.getText().toString(),serVerStatus,serVerNo.getText().toString());
-        ServiceProvider te = new ServiceProvider(teName.getText().toString(),teAddr.getText().toString(),teVerStatus,teVerNo.getText().toString());
-        ServiceProvider sw = new ServiceProvider(swName.getText().toString(),swAddr.getText().toString(),swVerStatus,swVerNo.getText().toString());
-        OtherServiceProvider oth = new OtherServiceProvider(otSerType.getText().toString(),otName.getText().toString(),otAddr.getText().toString(),otVerStatus,otVerNo.getText().toString());
-        ServiceProvider car = new ServiceProvider(carName.getText().toString(),carAddr.getText().toString(),carVerStatus,carVerNo.getText().toString());
-        serviceProviders = new ServiceProviders(dr,wa,ser,te,sw,car,oth);
-        viewPager.setCurrentItem(tablayout.getSelectedTabPosition()+1);
-    }
-    public int encodeSec(String s){
-        if(s.equals("Yes")){
+
+    public int encodeSec(String s) {
+        if (s.equals("Yes")) {
             return 1;
         }
-        if(s.equals("No")){
+        if (s.equals("No")) {
             return 0;
         }
-        if(s.equals("Poor")){
+        if (s.equals("Poor")) {
             return 2;
         }
         return 3;
     }
-    public void onClickSubmit(View view){
-        /**
-        Button service = findViewById(R.id.serviceProviderSubmit);
-        Button basic = findViewById(R.id.basicDetailsSubmit);
-        onClickSaveBasicDetails(basic);
-        onClickSaveServiceProviders(service);
-         **/
+
+    private void locationEnabled() {
+
+        LocationManager lm = (LocationManager)
+                getSystemService(Context.LOCATION_SERVICE);
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (!gps_enabled && !network_enabled) {
+            new AlertDialog.Builder(VerifyActivity.this)
+                    .setMessage("Please Enable GPS")
+                    .setPositiveButton("Settings", new
+                            DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                                    startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                                }
+                            })
+                    .show();
+
+        }
+    }
+
+    public void onClickSubmit(View view) {
         initialiseSwitchCompats();
         try {
-            securityChecks = new SecurityChecks(encodeSec(getChecked(Aaa)),encodeSec(getChecked(Aab)),encodeSec(getChecked(Aac)),encodeSec(getChecked(Aad)),
-                    encodeSec(getChecked(Aae)),encodeSec(getChecked(Aaf)),encodeSec(getChecked(Aag)),encodeSec(getChecked(Aba)),encodeSec(getChecked(Abb)),
-                    encodeSec(getChecked(Abc)),encodeSec(getChecked(Abd)),encodeSec(getChecked(Abe)),encodeSec(getChecked(Abf)),encodeSec(getChecked(Abg)),
-                    encodeSec(getChecked(Ba)),encodeSec(getChecked(Bb)),encodeSec(getChecked(Bc)),encodeSec(getChecked(Bd)),encodeSec(getChecked(Be)),
+            securityChecks = new SecurityChecks(encodeSec(getChecked(Aaa)), encodeSec(getChecked(Aab)), encodeSec(getChecked(Aac)), encodeSec(getChecked(Aad)),
+                    encodeSec(getChecked(Aae)), encodeSec(getChecked(Aaf)), encodeSec(getChecked(Aag)), encodeSec(getChecked(Aba)), encodeSec(getChecked(Abb)),
+                    encodeSec(getChecked(Abc)), encodeSec(getChecked(Abd)), encodeSec(getChecked(Abe)), encodeSec(getChecked(Abf)), encodeSec(getChecked(Abg)),
+                    encodeSec(getChecked(Ba)), encodeSec(getChecked(Bb)), encodeSec(getChecked(Bc)), encodeSec(getChecked(Bd)), encodeSec(getChecked(Be)),
                     encodeSec(getChecked(Bf)));
             currentTime = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+            if (latitude == 0.0) {
+                locationEnabled();
+                locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+            }
             location = new Loc(String.valueOf(latitude),String.valueOf(longitude));
             moreDetails = new MoreDetails(location, CurrentUser.currentUser.getMob(),CurrentUser.currentUser.getName(),currentDate,currentTime);
-            VerifySnr verifySnr = new VerifySnr(basicDetails,serviceProviders,securityChecks,moreDetails);
+            VerifySnr verifySnr = new VerifySnr(basicDetails,CurrentServiceProviderList.currentServiceList,securityChecks,moreDetails);
             String id = basicDetails.getPersonalDetails().getMob();
-            databaseReference.child(Objects.requireNonNull(getIntent().getStringExtra("police"))).child(id).setValue(verifySnr).addOnSuccessListener(new OnSuccessListener<Void>() {
+            DatabaseReference databaseReference1 = firebaseDatabase.getReference("last_visited");
+            LastVisit lastVisit = new LastVisit(verifySnr.getBasicDetails().getPersonalDetails().getName(),verifySnr.getBasicDetails().getPersonalDetails().getMob(),"NONE",CurrentUser.currentUser.getPolice(),currentPhotoDownloadableUrl);
+            databaseReference1.child("+91"+verifySnr.getBasicDetails().getPersonalDetails().getMob()).setValue(lastVisit);
+            databaseReference.child(CurrentUser.currentUser.getPolice()).child(id).setValue(verifySnr).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Toast.makeText(getApplicationContext(), "SUBMIT SUCCESSFUL", Toast.LENGTH_LONG).show();
+
                         Intent intent = new Intent(VerifyActivity.this, DashActivity.class);
                         startActivity(intent);
                     }
@@ -470,8 +433,6 @@ public class VerifyActivity extends AppCompatActivity implements LocationListene
             n.printStackTrace();
             Toast.makeText(getApplicationContext(),"PLEASE SAVE DETAILS",Toast.LENGTH_LONG).show();
         }
-
-
     }
 
     public void onClickGenderTenant(View view){
@@ -542,533 +503,6 @@ public class VerifyActivity extends AppCompatActivity implements LocationListene
         }
     }
 
-    public void onClickAddServant(View view){
-        CardView add = findViewById(R.id.addServantBtn);
-        if (add.getVisibility()==View.VISIBLE){
-            LinearLayout linearLayout = findViewById(R.id.ServantLayout);
-            linearLayout.setVisibility(View.VISIBLE);
-            CardView save = findViewById(R.id.saveServantBtn);
-            CardView cancel = findViewById(R.id.cancelServantBtn);
-            CardView edit = findViewById(R.id.editServantBtn);
-            save.setVisibility(View.VISIBLE);
-            cancel.setVisibility(View.VISIBLE);
-            add.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.INVISIBLE);
-        }
-    }
-    public void onClickSaveServant(View view){
-        EditText name = findViewById(R.id.ServantName);
-        EditText addr = findViewById(R.id.ServantAdd);
-        EditText verNo = findViewById(R.id.ServantVerNo);
-        Spinner spinner = findViewById(R.id.ServantVerStatus);
-        if (spinner.getSelectedItem().toString().equals("Select Verification Status"))
-            Toast.makeText(getApplicationContext(),"PLEASE SELECT VERIFICATION STATUS",Toast.LENGTH_LONG).show();
-        else if (TextUtils.isEmpty(name.getText()) || TextUtils.isEmpty(addr.getText()) || TextUtils.isEmpty(verNo.getText()))
-            Toast.makeText(getApplicationContext(),"FIELDS CANNOT BE EMPTY",Toast.LENGTH_LONG).show();
-        else {
-            LinearLayout linearLayout = findViewById(R.id.ServantLayout);
-            linearLayout.setVisibility(View.GONE);
-            CardView save = findViewById(R.id.saveServantBtn);
-            CardView cancel = findViewById(R.id.cancelServantBtn);
-            ImageView done = findViewById(R.id.doneServant);
-            done.setVisibility(View.VISIBLE);
-            CardView add = findViewById(R.id.addServantBtn);
-            CardView edit = findViewById(R.id.editServantBtn);
-            save.setVisibility(View.INVISIBLE);
-            cancel.setVisibility(View.INVISIBLE);
-            add.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.VISIBLE);
-            Toast.makeText(getApplicationContext(),"CHANGES SAVED!",Toast.LENGTH_LONG).show();
-        }
-    }
-    public void onClickEditServant(View view){
-        CardView edit = findViewById(R.id.editServantBtn);
-        CardView add = findViewById(R.id.addServantBtn);
-        if (edit.getVisibility()==View.VISIBLE){
-            LinearLayout linearLayout = findViewById(R.id.ServantLayout);
-            linearLayout.setVisibility(View.VISIBLE);
-            CardView save = findViewById(R.id.saveServantBtn);
-            CardView cancel = findViewById(R.id.cancelServantBtn);
-            save.setVisibility(View.VISIBLE);
-            cancel.setVisibility(View.VISIBLE);
-            add.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.INVISIBLE);
-        }
-    }
-    public void onClickCancelServant(View view){
-        CardView save = findViewById(R.id.saveServantBtn);
-        CardView cancel = findViewById(R.id.cancelServantBtn);
-        CardView add = findViewById(R.id.addServantBtn);
-        CardView edit = findViewById(R.id.editServantBtn);
-        ImageView done = findViewById(R.id.doneServant);
-        if (done.getVisibility() == View.VISIBLE)
-        {
-            save.setVisibility(View.INVISIBLE);
-            cancel.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.VISIBLE);
-            add.setVisibility(View.INVISIBLE);
-        }
-        else{
-            save.setVisibility(View.INVISIBLE);
-            cancel.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.INVISIBLE);
-            add.setVisibility(View.VISIBLE);
-        }
-        LinearLayout linearLayout = findViewById(R.id.ServantLayout);
-        linearLayout.setVisibility(View.GONE);
-    }
-    //Watchman  FUNCTIONS
-    public void onClickAddWatchman(View view){
-        CardView add = findViewById(R.id.addWatchmanBtn);
-        if (add.getVisibility()==View.VISIBLE){
-            LinearLayout linearLayout = findViewById(R.id.WatchmanLayout);
-            linearLayout.setVisibility(View.VISIBLE);
-            CardView save = findViewById(R.id.saveWatchmanBtn);
-            CardView cancel = findViewById(R.id.cancelWatchmanBtn);
-            CardView edit = findViewById(R.id.editWatchmanBtn);
-            save.setVisibility(View.VISIBLE);
-            cancel.setVisibility(View.VISIBLE);
-            add.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.INVISIBLE);
-        }
-    }
-    public void onClickSaveWatchman(View view){
-        EditText name = findViewById(R.id.WatchmanName);
-        EditText addr = findViewById(R.id.WatchmanAdd);
-        EditText verNo = findViewById(R.id.WatchmanVerNo);
-        Spinner spinner = findViewById(R.id.WatchmanVerStatus);
-        if (spinner.getSelectedItem().toString().equals("Select Verification Status"))
-            Toast.makeText(getApplicationContext(),"PLEASE SELECT VERIFICATION STATUS",Toast.LENGTH_LONG).show();
-        else if (TextUtils.isEmpty(name.getText()) || TextUtils.isEmpty(addr.getText()) || TextUtils.isEmpty(verNo.getText()))
-            Toast.makeText(getApplicationContext(),"FIELDS CANNOT BE EMPTY",Toast.LENGTH_LONG).show();
-        else {
-            LinearLayout linearLayout = findViewById(R.id.WatchmanLayout);
-            linearLayout.setVisibility(View.GONE);
-            CardView save = findViewById(R.id.saveWatchmanBtn);
-            CardView cancel = findViewById(R.id.cancelWatchmanBtn);
-            ImageView done = findViewById(R.id.doneWatchman);
-            done.setVisibility(View.VISIBLE);
-            CardView add = findViewById(R.id.addWatchmanBtn);
-            CardView edit = findViewById(R.id.editWatchmanBtn);
-            save.setVisibility(View.INVISIBLE);
-            cancel.setVisibility(View.INVISIBLE);
-            add.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.VISIBLE);
-            Toast.makeText(getApplicationContext(),"CHANGES SAVED!",Toast.LENGTH_LONG).show();
-        }
-    }
-    public void onClickEditWatchman(View view){
-        CardView edit = findViewById(R.id.editWatchmanBtn);
-        CardView add = findViewById(R.id.addWatchmanBtn);
-        if (edit.getVisibility()==View.VISIBLE){
-            LinearLayout linearLayout = findViewById(R.id.WatchmanLayout);
-            linearLayout.setVisibility(View.VISIBLE);
-            CardView save = findViewById(R.id.saveWatchmanBtn);
-            CardView cancel = findViewById(R.id.cancelWatchmanBtn);
-            save.setVisibility(View.VISIBLE);
-            cancel.setVisibility(View.VISIBLE);
-            add.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.INVISIBLE);
-        }
-    }
-    public void onClickCancelWatchman(View view){
-        CardView save = findViewById(R.id.saveWatchmanBtn);
-        CardView cancel = findViewById(R.id.cancelWatchmanBtn);
-        CardView add = findViewById(R.id.addWatchmanBtn);
-        CardView edit = findViewById(R.id.editWatchmanBtn);
-        ImageView done = findViewById(R.id.doneWatchman);
-        if (done.getVisibility() == View.VISIBLE)
-        {
-            save.setVisibility(View.INVISIBLE);
-            cancel.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.VISIBLE);
-            add.setVisibility(View.INVISIBLE);
-        }
-        else{
-            save.setVisibility(View.INVISIBLE);
-            cancel.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.INVISIBLE);
-            add.setVisibility(View.VISIBLE);
-        }
-        LinearLayout linearLayout = findViewById(R.id.WatchmanLayout);
-        linearLayout.setVisibility(View.GONE);
-    }
-    public void onClickAddTenant(View view){
-        CardView add = findViewById(R.id.addTenantBtn);
-        if (add.getVisibility()==View.VISIBLE){
-            LinearLayout linearLayout = findViewById(R.id.TenantLayout);
-            linearLayout.setVisibility(View.VISIBLE);
-            CardView save = findViewById(R.id.saveTenantBtn);
-            CardView cancel = findViewById(R.id.cancelTenantBtn);
-            CardView edit = findViewById(R.id.editTenantBtn);
-            save.setVisibility(View.VISIBLE);
-            cancel.setVisibility(View.VISIBLE);
-            add.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.INVISIBLE);
-        }
-    }
-    public void onClickSaveTenant(View view){
-        EditText name = findViewById(R.id.TenantName);
-        EditText addr = findViewById(R.id.TenantAdd);
-        EditText verNo = findViewById(R.id.TenantVerNo);
-        Spinner spinner = findViewById(R.id.TenantVerStatus);
-        if (spinner.getSelectedItem().toString().equals("Select Verification Status"))
-            Toast.makeText(getApplicationContext(),"PLEASE SELECT VERIFICATION STATUS",Toast.LENGTH_LONG).show();
-        else if (TextUtils.isEmpty(name.getText()) || TextUtils.isEmpty(addr.getText()) || TextUtils.isEmpty(verNo.getText()))
-            Toast.makeText(getApplicationContext(),"FIELDS CANNOT BE EMPTY",Toast.LENGTH_LONG).show();
-        else {
-            LinearLayout linearLayout = findViewById(R.id.TenantLayout);
-            linearLayout.setVisibility(View.GONE);
-            CardView save = findViewById(R.id.saveTenantBtn);
-            CardView cancel = findViewById(R.id.cancelTenantBtn);
-            ImageView done = findViewById(R.id.doneTenant);
-            done.setVisibility(View.VISIBLE);
-            CardView add = findViewById(R.id.addTenantBtn);
-            CardView edit = findViewById(R.id.editTenantBtn);
-            save.setVisibility(View.INVISIBLE);
-            cancel.setVisibility(View.INVISIBLE);
-            add.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.VISIBLE);
-            Toast.makeText(getApplicationContext(),"CHANGES SAVED!",Toast.LENGTH_LONG).show();
-        }
-    }
-    public void onClickEditTenant(View view){
-        CardView edit = findViewById(R.id.editTenantBtn);
-        CardView add = findViewById(R.id.addTenantBtn);
-        if (edit.getVisibility()==View.VISIBLE){
-            LinearLayout linearLayout = findViewById(R.id.TenantLayout);
-            linearLayout.setVisibility(View.VISIBLE);
-            CardView save = findViewById(R.id.saveTenantBtn);
-            CardView cancel = findViewById(R.id.cancelTenantBtn);
-            save.setVisibility(View.VISIBLE);
-            cancel.setVisibility(View.VISIBLE);
-            add.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.INVISIBLE);
-        }
-    }
-    public void onClickCancelTenant(View view){
-        CardView save = findViewById(R.id.saveTenantBtn);
-        CardView cancel = findViewById(R.id.cancelTenantBtn);
-        CardView add = findViewById(R.id.addTenantBtn);
-        CardView edit = findViewById(R.id.editTenantBtn);
-        ImageView done = findViewById(R.id.doneTenant);
-        if (done.getVisibility() == View.VISIBLE)
-        {
-            save.setVisibility(View.INVISIBLE);
-            cancel.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.VISIBLE);
-            add.setVisibility(View.INVISIBLE);
-        }
-        else{
-            save.setVisibility(View.INVISIBLE);
-            cancel.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.INVISIBLE);
-            add.setVisibility(View.VISIBLE);
-        }
-        LinearLayout linearLayout = findViewById(R.id.TenantLayout);
-        linearLayout.setVisibility(View.GONE);
-    }
-    public void onClickAddSweeper(View view){
-        CardView add = findViewById(R.id.addSweeperBtn);
-        if (add.getVisibility()==View.VISIBLE){
-            LinearLayout linearLayout = findViewById(R.id.SweeperLayout);
-            linearLayout.setVisibility(View.VISIBLE);
-            CardView save = findViewById(R.id.saveSweeperBtn);
-            CardView cancel = findViewById(R.id.cancelSweeperBtn);
-            CardView edit = findViewById(R.id.editSweeperBtn);
-            save.setVisibility(View.VISIBLE);
-            cancel.setVisibility(View.VISIBLE);
-            add.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.INVISIBLE);
-        }
-    }
-    public void onClickSaveSweeper(View view){
-        EditText name = findViewById(R.id.SweeperName);
-        EditText addr = findViewById(R.id.SweeperAdd);
-        EditText verNo = findViewById(R.id.SweeperVerNo);
-        Spinner spinner = findViewById(R.id.SweeperVerStatus);
-        if (spinner.getSelectedItem().toString().equals("Select Verification Status"))
-            Toast.makeText(getApplicationContext(),"PLEASE SELECT VERIFICATION STATUS",Toast.LENGTH_LONG).show();
-        else if (TextUtils.isEmpty(name.getText()) || TextUtils.isEmpty(addr.getText()) || TextUtils.isEmpty(verNo.getText()))
-            Toast.makeText(getApplicationContext(),"FIELDS CANNOT BE EMPTY",Toast.LENGTH_LONG).show();
-        else {
-            LinearLayout linearLayout = findViewById(R.id.SweeperLayout);
-            linearLayout.setVisibility(View.GONE);
-            CardView save = findViewById(R.id.saveSweeperBtn);
-            CardView cancel = findViewById(R.id.cancelSweeperBtn);
-            ImageView done = findViewById(R.id.doneSweeper);
-            done.setVisibility(View.VISIBLE);
-            CardView add = findViewById(R.id.addSweeperBtn);
-            CardView edit = findViewById(R.id.editSweeperBtn);
-            save.setVisibility(View.INVISIBLE);
-            cancel.setVisibility(View.INVISIBLE);
-            add.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.VISIBLE);
-            Toast.makeText(getApplicationContext(),"CHANGES SAVED!",Toast.LENGTH_LONG).show();
-        }
-    }
-    public void onClickEditSweeper(View view){
-        CardView edit = findViewById(R.id.editSweeperBtn);
-        CardView add = findViewById(R.id.addSweeperBtn);
-        if (edit.getVisibility()==View.VISIBLE){
-            LinearLayout linearLayout = findViewById(R.id.SweeperLayout);
-            linearLayout.setVisibility(View.VISIBLE);
-            CardView save = findViewById(R.id.saveSweeperBtn);
-            CardView cancel = findViewById(R.id.cancelSweeperBtn);
-            save.setVisibility(View.VISIBLE);
-            cancel.setVisibility(View.VISIBLE);
-            add.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.INVISIBLE);
-        }
-    }
-    public void onClickCancelSweeper(View view){
-        CardView save = findViewById(R.id.saveSweeperBtn);
-        CardView cancel = findViewById(R.id.cancelSweeperBtn);
-        CardView add = findViewById(R.id.addSweeperBtn);
-        CardView edit = findViewById(R.id.editSweeperBtn);
-        ImageView done = findViewById(R.id.doneSweeper);
-        if (done.getVisibility() == View.VISIBLE)
-        {
-            save.setVisibility(View.INVISIBLE);
-            cancel.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.VISIBLE);
-            add.setVisibility(View.INVISIBLE);
-        }
-        else{
-            save.setVisibility(View.INVISIBLE);
-            cancel.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.INVISIBLE);
-            add.setVisibility(View.VISIBLE);
-        }
-        LinearLayout linearLayout = findViewById(R.id.SweeperLayout);
-        linearLayout.setVisibility(View.GONE);
-    }
-    public void onClickAddCarCleaner(View view){
-        CardView add = findViewById(R.id.addCarCleanerBtn);
-        if (add.getVisibility()==View.VISIBLE){
-            LinearLayout linearLayout = findViewById(R.id.CarCleanerLayout);
-            linearLayout.setVisibility(View.VISIBLE);
-            CardView save = findViewById(R.id.saveCarCleanerBtn);
-            CardView cancel = findViewById(R.id.cancelCarCleanerBtn);
-            CardView edit = findViewById(R.id.editCarCleanerBtn);
-            save.setVisibility(View.VISIBLE);
-            cancel.setVisibility(View.VISIBLE);
-            add.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.INVISIBLE);
-        }
-    }
-    public void onClickSaveCarCleaner(View view){
-        EditText name = findViewById(R.id.CarCleanerName);
-        EditText addr = findViewById(R.id.CarCleanerAdd);
-        EditText verNo = findViewById(R.id.CarCleanerVerNo);
-        Spinner spinner = findViewById(R.id.CarCleanerVerStatus);
-        if (spinner.getSelectedItem().toString().equals("Select Verification Status"))
-            Toast.makeText(getApplicationContext(),"PLEASE SELECT VERIFICATION STATUS",Toast.LENGTH_LONG).show();
-        else if (TextUtils.isEmpty(name.getText()) || TextUtils.isEmpty(addr.getText()) || TextUtils.isEmpty(verNo.getText()))
-            Toast.makeText(getApplicationContext(),"FIELDS CANNOT BE EMPTY",Toast.LENGTH_LONG).show();
-        else {
-            LinearLayout linearLayout = findViewById(R.id.CarCleanerLayout);
-            linearLayout.setVisibility(View.GONE);
-            CardView save = findViewById(R.id.saveCarCleanerBtn);
-            CardView cancel = findViewById(R.id.cancelCarCleanerBtn);
-            ImageView done = findViewById(R.id.doneCarCleaner);
-            done.setVisibility(View.VISIBLE);
-            CardView add = findViewById(R.id.addCarCleanerBtn);
-            CardView edit = findViewById(R.id.editCarCleanerBtn);
-            save.setVisibility(View.INVISIBLE);
-            cancel.setVisibility(View.INVISIBLE);
-            add.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.VISIBLE);
-            Toast.makeText(getApplicationContext(),"CHANGES SAVED!",Toast.LENGTH_LONG).show();
-        }
-    }
-    public void onClickEditCarCleaner(View view){
-        CardView edit = findViewById(R.id.editCarCleanerBtn);
-        CardView add = findViewById(R.id.addCarCleanerBtn);
-        if (edit.getVisibility()==View.VISIBLE){
-            LinearLayout linearLayout = findViewById(R.id.CarCleanerLayout);
-            linearLayout.setVisibility(View.VISIBLE);
-            CardView save = findViewById(R.id.saveCarCleanerBtn);
-            CardView cancel = findViewById(R.id.cancelCarCleanerBtn);
-            save.setVisibility(View.VISIBLE);
-            cancel.setVisibility(View.VISIBLE);
-            add.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.INVISIBLE);
-        }
-    }
-    public void onClickCancelCarCleaner(View view){
-        CardView save = findViewById(R.id.saveCarCleanerBtn);
-        CardView cancel = findViewById(R.id.cancelCarCleanerBtn);
-        CardView add = findViewById(R.id.addCarCleanerBtn);
-        CardView edit = findViewById(R.id.editCarCleanerBtn);
-        ImageView done = findViewById(R.id.doneCarCleaner);
-        if (done.getVisibility() == View.VISIBLE)
-        {
-            save.setVisibility(View.INVISIBLE);
-            cancel.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.VISIBLE);
-            add.setVisibility(View.INVISIBLE);
-        }
-        else{
-            save.setVisibility(View.INVISIBLE);
-            cancel.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.INVISIBLE);
-            add.setVisibility(View.VISIBLE);
-        }
-        LinearLayout linearLayout = findViewById(R.id.CarCleanerLayout);
-        linearLayout.setVisibility(View.GONE);
-    }
-    public void onClickAddOthers(View view){
-        CardView add = findViewById(R.id.addOthersBtn);
-        if (add.getVisibility()==View.VISIBLE){
-            LinearLayout linearLayout = findViewById(R.id.OthersLayout);
-            linearLayout.setVisibility(View.VISIBLE);
-            CardView save = findViewById(R.id.saveOthersBtn);
-            CardView cancel = findViewById(R.id.cancelOthersBtn);
-            CardView edit = findViewById(R.id.editOthersBtn);
-            save.setVisibility(View.VISIBLE);
-            cancel.setVisibility(View.VISIBLE);
-            add.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.INVISIBLE);
-        }
-    }
-    public void onClickSaveOthers(View view){
-        EditText name = findViewById(R.id.OthersName);
-        EditText serType = findViewById(R.id.OthersSerType);
-        EditText addr = findViewById(R.id.OthersAdd);
-        EditText verNo = findViewById(R.id.OthersVerNo);
-        Spinner spinner = findViewById(R.id.OthersVerStatus);
-        if (spinner.getSelectedItem().toString().equals("Select Verification Status"))
-            Toast.makeText(getApplicationContext(),"PLEASE SELECT VERIFICATION STATUS",Toast.LENGTH_LONG).show();
-        else if (TextUtils.isEmpty(name.getText()) || TextUtils.isEmpty(addr.getText()) || TextUtils.isEmpty(verNo.getText()) || TextUtils.isEmpty(serType.getText()))
-            Toast.makeText(getApplicationContext(),"FIELDS CANNOT BE EMPTY",Toast.LENGTH_LONG).show();
-        else {
-            LinearLayout linearLayout = findViewById(R.id.OthersLayout);
-            linearLayout.setVisibility(View.GONE);
-            CardView save = findViewById(R.id.saveOthersBtn);
-            CardView cancel = findViewById(R.id.cancelOthersBtn);
-            ImageView done = findViewById(R.id.doneOthers);
-            done.setVisibility(View.VISIBLE);
-            CardView add = findViewById(R.id.addOthersBtn);
-            CardView edit = findViewById(R.id.editOthersBtn);
-            save.setVisibility(View.INVISIBLE);
-            cancel.setVisibility(View.INVISIBLE);
-            add.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.VISIBLE);
-            Toast.makeText(getApplicationContext(),"CHANGES SAVED!",Toast.LENGTH_LONG).show();
-        }
-    }
-    public void onClickEditOthers(View view){
-        CardView edit = findViewById(R.id.editOthersBtn);
-        CardView add = findViewById(R.id.addOthersBtn);
-        if (edit.getVisibility()==View.VISIBLE){
-            LinearLayout linearLayout = findViewById(R.id.OthersLayout);
-            linearLayout.setVisibility(View.VISIBLE);
-            CardView save = findViewById(R.id.saveOthersBtn);
-            CardView cancel = findViewById(R.id.cancelOthersBtn);
-            save.setVisibility(View.VISIBLE);
-            cancel.setVisibility(View.VISIBLE);
-            add.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.INVISIBLE);
-        }
-    }
-    public void onClickCancelOthers(View view){
-        CardView save = findViewById(R.id.saveOthersBtn);
-        CardView cancel = findViewById(R.id.cancelOthersBtn);
-        CardView add = findViewById(R.id.addOthersBtn);
-        CardView edit = findViewById(R.id.editOthersBtn);
-        ImageView done = findViewById(R.id.doneOthers);
-        if (done.getVisibility() == View.VISIBLE)
-        {
-            save.setVisibility(View.INVISIBLE);
-            cancel.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.VISIBLE);
-            add.setVisibility(View.INVISIBLE);
-        }
-        else{
-            save.setVisibility(View.INVISIBLE);
-            cancel.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.INVISIBLE);
-            add.setVisibility(View.VISIBLE);
-        }
-        LinearLayout linearLayout = findViewById(R.id.OthersLayout);
-        linearLayout.setVisibility(View.GONE);
-    }
-    public void onClickAddDriver(View view){
-        CardView add = findViewById(R.id.addDriverBtn);
-        if (add.getVisibility()==View.VISIBLE){
-            LinearLayout linearLayout = findViewById(R.id.driverLayout);
-            linearLayout.setVisibility(View.VISIBLE);
-            CardView save = findViewById(R.id.saveDriverBtn);
-            CardView cancel = findViewById(R.id.cancelDriverBtn);
-            CardView edit = findViewById(R.id.editDriverBtn);
-            save.setVisibility(View.VISIBLE);
-            cancel.setVisibility(View.VISIBLE);
-            add.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.INVISIBLE);
-        }
-    }
-    public void onClickSaveDriver(View view){
-        EditText name = findViewById(R.id.driverName);
-        EditText addr = findViewById(R.id.driverAdd);
-        EditText verNo = findViewById(R.id.driverVerNo);
-        Spinner spinner = findViewById(R.id.driverVerStatus);
-        if (spinner.getSelectedItem().toString().equals("Select Verification Status"))
-            Toast.makeText(getApplicationContext(),"PLEASE SELECT VERIFICATION STATUS",Toast.LENGTH_LONG).show();
-        else if (TextUtils.isEmpty(name.getText()) || TextUtils.isEmpty(addr.getText()) || TextUtils.isEmpty(verNo.getText()))
-            Toast.makeText(getApplicationContext(),"FIELDS CANNOT BE EMPTY",Toast.LENGTH_LONG).show();
-        else {
-            LinearLayout linearLayout = findViewById(R.id.driverLayout);
-            linearLayout.setVisibility(View.GONE);
-            CardView save = findViewById(R.id.saveDriverBtn);
-            CardView cancel = findViewById(R.id.cancelDriverBtn);
-            ImageView done = findViewById(R.id.doneDriver);
-            done.setVisibility(View.VISIBLE);
-            CardView add = findViewById(R.id.addDriverBtn);
-            CardView edit = findViewById(R.id.editDriverBtn);
-            save.setVisibility(View.INVISIBLE);
-            cancel.setVisibility(View.INVISIBLE);
-            add.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.VISIBLE);
-            Toast.makeText(getApplicationContext(),"CHANGES SAVED!",Toast.LENGTH_LONG).show();
-        }
-    }
-    public void onClickEditDriver(View view){
-        CardView edit = findViewById(R.id.editDriverBtn);
-        CardView add = findViewById(R.id.addDriverBtn);
-        if (edit.getVisibility()==View.VISIBLE){
-            LinearLayout linearLayout = findViewById(R.id.driverLayout);
-            linearLayout.setVisibility(View.VISIBLE);
-            CardView save = findViewById(R.id.saveDriverBtn);
-            CardView cancel = findViewById(R.id.cancelDriverBtn);
-            save.setVisibility(View.VISIBLE);
-            cancel.setVisibility(View.VISIBLE);
-            add.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.INVISIBLE);
-        }
-    }
-    public void onClickCancelDriver(View view){
-        CardView save = findViewById(R.id.saveDriverBtn);
-        CardView cancel = findViewById(R.id.cancelDriverBtn);
-        CardView add = findViewById(R.id.addDriverBtn);
-        CardView edit = findViewById(R.id.editDriverBtn);
-        ImageView done = findViewById(R.id.doneDriver);
-        if (done.getVisibility() == View.VISIBLE)
-        {
-            save.setVisibility(View.INVISIBLE);
-            cancel.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.VISIBLE);
-            add.setVisibility(View.INVISIBLE);
-        }
-        else{
-            save.setVisibility(View.INVISIBLE);
-            cancel.setVisibility(View.INVISIBLE);
-            edit.setVisibility(View.INVISIBLE);
-            add.setVisibility(View.VISIBLE);
-        }
-        LinearLayout linearLayout = findViewById(R.id.driverLayout);
-        linearLayout.setVisibility(View.GONE);
-    }
 
     @Override
     public void onLocationChanged(Location location) {

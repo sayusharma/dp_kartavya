@@ -20,7 +20,7 @@ public class SaveSharedPreference {
     public static void setPhoto(Context ctx,String photo)
     {
         SharedPreferences.Editor editor = getSharedPreferences(ctx).edit();
-       // editor.putString(PREF_USER_NAME, userName);
+        // editor.putString(PREF_USER_NAME, userName);
         editor.putString(PREF_PHOTO,photo);
         editor.commit();
     }

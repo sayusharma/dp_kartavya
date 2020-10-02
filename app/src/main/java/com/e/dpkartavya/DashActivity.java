@@ -12,6 +12,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -28,13 +29,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
-public class DashActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-    private customAdapter adapter;
-    private Spinner locationspinner;
+public class DashActivity extends AppCompatActivity  {
     private ImageView imageView;
-    private ArrayList<CustomItem> customList;
     private boolean gps_enabled=false;
     private boolean network_enabled = false;
     private FirebaseDatabase firebaseDatabase;
@@ -44,21 +45,25 @@ public class DashActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dash);
-        locationspinner = findViewById(R.id.locationspinner);
         imageView = findViewById(R.id.profile_pic);
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("users");
         final ProgressDialog p = new ProgressDialog(this);
         p.setMessage("Please Wait...");
         p.show();
+        p.setCancelable(false);
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 user = dataSnapshot.child(SaveSharedPreference.getUserName(getApplicationContext())).getValue(User.class);
                 CurrentUser.currentUser = user;
-                Picasso.get()
-                        .load(CurrentUser.currentUser.getPhoto())
-                        .into(imageView);
+                try {
+                    Picasso.get()
+                            .load(CurrentUser.currentUser.getPhoto())
+                            .into(imageView);
+                }catch (Exception e){
+                    Toast.makeText(getApplicationContext(),"FAILED TO LOAD PROFILE PHOTO",Toast.LENGTH_LONG).show();
+                }
                 p.dismiss();
                 //Toast.makeText(getApplicationContext(),""+CurrentUser.currentUser.getName(),Toast.LENGTH_LONG).show();
             }
@@ -69,10 +74,7 @@ public class DashActivity extends AppCompatActivity implements AdapterView.OnIte
                 Toast.makeText(getApplicationContext(),"BAD DATABASE REQUEST",Toast.LENGTH_LONG).show();
             }
         });
-        customList = getCustomList();
-        adapter = new customAdapter(this, customList);
-        locationspinner.setAdapter(adapter);
-        locationspinner.setOnItemSelectedListener(this);
+
     }
     private void locationEnabled () {
 
@@ -117,58 +119,24 @@ public class DashActivity extends AppCompatActivity implements AdapterView.OnIte
         } catch (Exception e) {
             e.printStackTrace() ;
         }
-        if (!getLocation().equals("Select  Police Station")){
-            locationEnabled();
-            if (gps_enabled){
+        locationEnabled();
+        if (gps_enabled){
                 Intent intent = new Intent(DashActivity.this, VerifyActivity.class);
-                intent.putExtra("police",getLocation());
                 startActivity(intent);
-            }
-            else locationEnabled();
+        }
+        else locationEnabled();
 
-        }
-        else {
-            Toast.makeText(getApplicationContext(),"SELECT POLICE STATION",Toast.LENGTH_LONG).show();
-        }
-    }
-    public String getLocation(){
-        TextView textView = findViewById(R.id.tvsniperlayout);
-        return textView.getText().toString();
     }
     public void onClickMarkAVisit(View view)
     {
-        if (!getLocation().equals("Select  Police Station")) {
             Intent intent = new Intent(DashActivity.this, MarkVisitActivity.class);
-            intent.putExtra("police",getLocation());
             startActivity(intent);
-        }
-        else {
-            Toast.makeText(getApplicationContext(),"SELECT POLICE STATION",Toast.LENGTH_LONG).show();
-        }
-    }
-    public void onClickUpdateSenior(View view){
-        if (!getLocation().equals("Select  Police Station")) {
-            Intent intent = new Intent(DashActivity.this, MyVerificationActivity.class);
-            intent.putExtra("police",getLocation());
-            startActivity(intent);
-        }
-        else {
-            Toast.makeText(getApplicationContext(),"SELECT POLICE STATION",Toast.LENGTH_LONG).show();
-        }
-    }
-    private ArrayList<CustomItem> getCustomList() {
-        customList = new ArrayList<>();
-        customList.add(new CustomItem("Select  Police Station"));
-        customList.add(new CustomItem("Vasant Vihar"));
-        return customList;
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
     }
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
+    public void onClickUpdateSenior(View view)
+    {
+        Intent intent = new Intent(DashActivity.this, MyVerificationActivity.class);
+        startActivity(intent);
 
     }
 }

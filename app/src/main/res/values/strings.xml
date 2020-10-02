@@ -28,6 +28,11 @@
     <string name="Be">E. Whether BEAT police officer is regularly visiting the house\t\t</string>
     <string name="Bf">F. Lighting in surrounding Area/Street Lighting\t\t</string>
     <string name="register"><u>REGISTER NOW</u></string>
+    <string name="full_name">Full Name \u002A</string>
+    <string name="address">Address \u002A</string>
+    <string name="mob">Mobile Number \u002A</string>
+    <string name="gender">Gender \u002A</string>
+    <string name="DOB">Date of Birth \u002A</string>
     <string-array name="verification">
         <item>Select Verification Status</item>
         <item>Verified</item>
@@ -36,5 +41,37 @@
         <item>Verification Pending</item>
         <item>NONE</item>
     </string-array>
-
+    <string-array name="service_type">
+        <item>Select Service Type</item>
+        <item>DRIVER</item>
+        <item>WATCHMAN</item>
+        <item>LANDLORD</item>
+        <item>SERVANT</item>
+        <item>TENANT</item>
+        <item>SWEEPER</item>
+        <item>CAR CLEANER</item>
+        <item>COOK</item>
+        <item>OTHER</item>
+    </string-array>
+    <string-array name="police_station">
+        <item>Select Police Station</item>
+        <item>SAGAR PUR</item>
+        <item>PALAM VILLAGE</item>
+        <item>DELHI CANTT</item>
+        <item>VASANT VIHAR</item>
+        <item>SOUTH CAMPUS</item>
+        <item>R K PURAM</item>
+        <item>VASANT KUNJ NORTH</item>
+        <item>VASANT KUNJ SOUTH</item>
+        <item>KAPASHERA</item>
+        <item>KISHANGARH</item>
+        <item>S J ENCLAVE</item>
+        <item>SAROJANI NAGAR</item>
+    </string-array>
+    <string-array name="children_residence">
+        <item>Select Children Residence</item>
+        <item>In Delhi</item>
+        <item>Outside Delhi</item>
+        <item>Outside India</item>
+    </string-array>
 </resources>

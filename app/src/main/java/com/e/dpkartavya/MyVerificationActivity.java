@@ -23,7 +23,6 @@ public class MyVerificationActivity extends AppCompatActivity {
         tablayout.addTab(tablayout.newTab().setText("Verifications"));
         tablayout.addTab(tablayout.newTab().setText("Visits"));
         tablayout.setTabGravity(TabLayout.GRAVITY_FILL);
-        loc = getIntent().getStringExtra("police");
         final MyVerificationAdapter adapter = new MyVerificationAdapter(this,getSupportFragmentManager(),
                 tablayout.getTabCount());
         viewPager.setAdapter(adapter);

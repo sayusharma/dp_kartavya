@@ -1,10 +1,10 @@
 package com.e.dpkartavya.Model;
 
-import com.e.dpkartavya.ServiceProviders;
+import java.util.ArrayList;
 
 public class VerifySnr {
     private BasicDetails basicDetails;
-    private ServiceProviders serviceProviders;
+    private ArrayList<ServiceProvider> serviceProviders;
     private SecurityChecks securityChecks;
     private MoreDetails moreDetails;
     public VerifySnr() {
@@ -14,7 +14,7 @@ public class VerifySnr {
         return basicDetails;
     }
 
-    public ServiceProviders getServiceProviders() {
+    public ArrayList<ServiceProvider> getServiceProviders() {
         return serviceProviders;
     }
 
@@ -26,7 +26,7 @@ public class VerifySnr {
         return moreDetails;
     }
 
-    public VerifySnr(BasicDetails basicDetails, ServiceProviders serviceProviders, SecurityChecks securityChecks, MoreDetails moreDetails) {
+    public VerifySnr(BasicDetails basicDetails, ArrayList<ServiceProvider> serviceProviders, SecurityChecks securityChecks, MoreDetails moreDetails) {
         this.basicDetails = basicDetails;
         this.serviceProviders = serviceProviders;
         this.securityChecks = securityChecks;

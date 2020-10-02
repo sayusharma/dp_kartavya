@@ -53,29 +53,11 @@
 
         </androidx.cardview.widget.CardView>
     </androidx.appcompat.widget.Toolbar>
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardView"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="10dp"
-        app:cardCornerRadius="10dp"
-        app:layout_constraintTop_toBottomOf="@id/toolbar2"
-        tools:layout_editor_absoluteX="20dp">
-        <Spinner
-            android:id="@+id/locationspinner"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:gravity="center"
-            android:overScrollMode="never"
-            android:background="@drawable/spinner_background"/>
-    </androidx.cardview.widget.CardView>
     <ScrollView
         android:layout_marginBottom="10dp"
         android:layout_width="match_parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="118dp"
+        android:layout_marginTop="70dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
